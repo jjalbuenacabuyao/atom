@@ -1,0 +1,104 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">Awareness comes first</span>
+      <h1>Habits Scorecard</h1>
+      <p>
+        List what you do from the moment you wake up. Rate each behaviour: does it cast a vote for
+        the person you want to become?
+      </p>
+    </div>
+  </header>
+
+  <div class="summary" aria-label="Scorecard summary">
+    <span class="pill positive">+ {{ counts().positive }} good</span>
+    <span class="pill neutral">= {{ counts().neutral }} neutral</span>
+    <span class="pill negative">− {{ counts().negative }} bad</span>
+  </div>
+
+  <form
+    class="add"
+    (submit)="onSubmit($event)"
+    novalidate
+    aria-label="Add a habit to the scorecard"
+  >
+    <app-time-field class="time" label="Time" [formField]="entryForm.timeOfDay" />
+    <mat-form-field class="desc">
+      <mat-label>What do you do?</mat-label>
+      <input matInput [formField]="entryForm.description" placeholder="Check my phone" />
+      @if (entryForm.description().touched() && entryForm.description().errors()[0]; as error) {
+        <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+    <mat-button-toggle-group [formField]="entryForm.rating" aria-label="Rating" class="rating">
+      @for (r of ratings; track r.value) {
+        <mat-button-toggle [value]="r.value" [matTooltip]="r.label" [aria-label]="r.label">
+          {{ r.symbol }}
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+    <button mat-flat-button type="submit" [disabled]="entryForm().submitting()">Add</button>
+  </form>
+  @for (error of entryForm().errors(); track error) {
+    <p class="form-error" role="alert">{{ error.message }}</p>
+  }
+
+  @if (entries.isLoading() && !entries.value().length) {
+    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading scorecard" /></div>
+  }
+
+  @if (entries.error()) {
+    <div class="empty-state" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <h2>Could not load your scorecard</h2>
+      <button mat-stroked-button (click)="entries.reload()">Try again</button>
+    </div>
+  } @else if (!entries.isLoading() && entries.value().length === 0) {
+    <div class="empty-state">
+      <mat-icon>checklist</mat-icon>
+      <h2>Start with your morning</h2>
+      <p>Wake up · Turn off alarm · Check my phone · Go to the bathroom · Make coffee…</p>
+    </div>
+  } @else {
+    <ol class="entries segmented">
+      @for (entry of entries.value(); track entry.id) {
+        <li [class]="'entry ' + entry.rating">
+          <span class="symbol" aria-hidden="true">{{ symbol(entry.rating) }}</span>
+          <span class="when">{{ time(entry) }}</span>
+          <span class="what">{{ entry.description }}</span>
+          <mat-button-toggle-group
+            [value]="entry.rating"
+            (change)="rate(entry, $event.value)"
+            [attr.aria-label]="'Rate ' + entry.description"
+            hideSingleSelectionIndicator
+            class="rating small"
+          >
+            @for (r of ratings; track r.value) {
+              <mat-button-toggle [value]="r.value" [aria-label]="r.label">{{
+                r.symbol
+              }}</mat-button-toggle>
+            }
+          </mat-button-toggle-group>
+          @if (entry.rating === 'negative') {
+            <a
+              mat-icon-button
+              [routerLink]="['/habits/new']"
+              [queryParams]="{ title: entry.description, kind: 'break' }"
+              matTooltip="Design a plan to break this habit"
+              [attr.aria-label]="'Break the habit: ' + entry.description"
+            >
+              <mat-icon>block</mat-icon>
+            </a>
+          }
+          <button
+            mat-icon-button
+            (click)="remove(entry)"
+            [attr.aria-label]="'Remove ' + entry.description"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </li>
+      }
+    </ol>
+  }
+</div>

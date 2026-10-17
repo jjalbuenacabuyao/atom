@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <p class="intro">Celebrate your streak. The image is created on your device.</p>
+
+  <div class="options">
+    <mat-button-toggle-group
+      [value]="format()"
+      (change)="format.set($event.value)"
+      aria-label="Image format"
+      hideSingleSelectionIndicator
+    >
+      @for (f of formats; track f[0]) {
+        <mat-button-toggle [value]="f[0]">
+          {{ f[1].label }} · {{ f[0] === 'square' ? '1:1' : '9:16' }}
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group
+      [value]="theme()"
+      (change)="theme.set($event.value)"
+      aria-label="Image theme"
+      hideSingleSelectionIndicator
+    >
+      <mat-button-toggle value="light" aria-label="Light image">
+        <mat-icon>light_mode</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="dark" aria-label="Dark image">
+        <mat-icon>dark_mode</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="preview" [class.story]="format() === 'story'" aria-live="polite">
+    @if (image.hasValue()) {
+      <img
+        [src]="image.value().url"
+        [class.stale]="image.isLoading()"
+        alt="Preview of your shareable progress image"
+      />
+    }
+    @if (image.isLoading()) {
+      <app-loading-indicator class="spinner" label="Creating image" />
+    }
+    @if (image.error()) {
+      <p class="error" role="alert">
+        <mat-icon>error</mat-icon> Could not create the image. Please try again.
+      </p>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  @if (canCopy) {
+    <button mat-button (click)="copy()" [disabled]="!ready()">
+      <mat-icon>content_copy</mat-icon>Copy
+    </button>
+  }
+  @if (canShare) {
+    <button mat-button (click)="share()" [disabled]="!ready()">
+      <mat-icon>share</mat-icon>Share
+    </button>
+  }
+  <button mat-flat-button (click)="download()" [disabled]="!ready()">
+    <mat-icon>download</mat-icon>Download
+  </button>
+</mat-dialog-actions>

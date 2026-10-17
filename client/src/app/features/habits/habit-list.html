@@ -1,0 +1,112 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">Your system</span>
+      <h1>Habits</h1>
+      <p>Drag to reorder. Archive habits you have mastered to keep their history.</p>
+    </div>
+    <a mat-flat-button routerLink="/habits/new"><mat-icon>add</mat-icon>New habit</a>
+  </header>
+
+  <mat-button-toggle-group
+    [value]="view()"
+    (change)="view.set($event.value)"
+    aria-label="Show habits"
+    class="view-toggle"
+  >
+    <mat-button-toggle value="active">Active</mat-button-toggle>
+    <mat-button-toggle value="archived">Archived</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  @if (loading() && !habits().length) {
+    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading habits" /></div>
+  }
+
+  @if (resource.error()) {
+    <div class="empty-state" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <h2>Could not load habits</h2>
+      <button mat-stroked-button (click)="resource.reload()">Try again</button>
+    </div>
+  } @else if (!loading() && habits().length === 0) {
+    <div class="empty-state">
+      <mat-icon>{{ view() === 'active' ? 'bolt' : 'inventory_2' }}</mat-icon>
+      @if (view() === 'active') {
+        <h2>No habits yet</h2>
+        <p>Habits are the compound interest of self-improvement. Start with one.</p>
+        <a mat-flat-button routerLink="/habits/new">Create a habit</a>
+      } @else {
+        <h2>Nothing archived</h2>
+        <p>Archived habits keep their history but leave your daily list.</p>
+      }
+    </div>
+  } @else {
+    <div
+      class="list segmented"
+      role="list"
+      cdkDropList
+      [cdkDropListDisabled]="view() === 'archived'"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (habit of habits(); track habit.id) {
+        <div class="item habit-item" role="listitem" cdkDrag cdkDragLockAxis="y">
+          @if (view() === 'active') {
+            <button
+              mat-icon-button
+              class="handle"
+              cdkDragHandle
+              aria-label="Drag to reorder"
+              type="button"
+            >
+              <mat-icon>drag_indicator</mat-icon>
+            </button>
+          }
+          <a class="main" [routerLink]="['/habits', habit.id]">
+            <app-habit-avatar [icon]="habit.icon" [color]="habit.color" />
+            <div class="text">
+              <span class="name">{{ habit.name }}</span>
+              <span class="meta">
+                {{ habit.kind === 'break' ? 'Breaking' : 'Building' }} · {{ schedule(habit) }}
+                @if (habit.identity) {
+                  · {{ habit.identity.statement }}
+                }
+              </span>
+            </div>
+          </a>
+          <div class="stats">
+            <span matTooltip="Current streak"
+              ><mat-icon>local_fire_department</mat-icon>{{ habit.stats.currentStreak }}</span
+            >
+            <span matTooltip="Completion over the last 30 scheduled days">{{
+              percent(habit.stats.completionRate)
+            }}</span>
+          </div>
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            [attr.aria-label]="'Actions for ' + habit.name"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            @if (view() === 'active') {
+              <a mat-menu-item [routerLink]="['/habits', habit.id, 'edit']">
+                <mat-icon>edit</mat-icon><span>Edit</span>
+              </a>
+              <button mat-menu-item (click)="archive(habit)">
+                <mat-icon>archive</mat-icon><span>Archive</span>
+              </button>
+            } @else {
+              <button mat-menu-item (click)="restore(habit)">
+                <mat-icon>unarchive</mat-icon><span>Restore</span>
+              </button>
+            }
+            <button mat-menu-item (click)="remove(habit)">
+              <mat-icon>delete</mat-icon><span>Delete</span>
+            </button>
+          </mat-menu>
+        </div>
+      }
+    </div>
+  }
+</div>

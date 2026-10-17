@@ -1,0 +1,100 @@
+<mat-sidenav-container class="container">
+  @if (!isCompact()) {
+    <mat-sidenav mode="side" opened class="drawer">
+      <a routerLink="/today" class="brand" aria-label="Atom home">
+        <app-logo [size]="36" />
+      </a>
+
+      <a mat-fab extended routerLink="/habits/new" class="new-habit">
+        <mat-icon>add</mat-icon>
+        New habit
+      </a>
+
+      <mat-nav-list aria-label="Main navigation">
+        @for (item of nav; track item.path) {
+          <a
+            mat-list-item
+            [routerLink]="item.path"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [activated]="rla.isActive"
+            [attr.aria-current]="rla.isActive ? 'page' : null"
+          >
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
+      </mat-nav-list>
+
+      <p class="quote">
+        “You do not rise to the level of your goals. You fall to the level of your systems.”
+      </p>
+    </mat-sidenav>
+  }
+
+  <mat-sidenav-content class="content">
+    <mat-toolbar class="toolbar">
+      @if (isCompact()) {
+        <a routerLink="/today" class="brand" aria-label="Atom home">
+          <app-logo [size]="30" />
+        </a>
+      }
+      <span class="spacer"></span>
+
+      <button
+        mat-icon-button
+        (click)="theme.toggle()"
+        [matTooltip]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+        [attr.aria-label]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+      >
+        <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="accountMenu"
+        class="avatar-button"
+        [attr.aria-label]="initials() + ', account menu'"
+      >
+        <span class="avatar">{{ initials() }}</span>
+      </button>
+      <mat-menu #accountMenu="matMenu" xPosition="before">
+        <div class="account" role="presentation">
+          <strong>{{ user()?.name }}</strong>
+          <span>{{ user()?.email }}</span>
+        </div>
+        <mat-divider />
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sign out</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <main id="main" class="main">
+      <router-outlet />
+    </main>
+
+    @if (isCompact()) {
+      <a mat-fab routerLink="/habits/new" class="fab" aria-label="New habit">
+        <mat-icon>add</mat-icon>
+      </a>
+
+      <nav class="bottom-nav" aria-label="Main navigation">
+        @for (item of nav; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            #rla="routerLinkActive"
+            [attr.aria-current]="rla.isActive ? 'page' : null"
+          >
+            <span class="indicator"
+              ><mat-icon>{{ item.icon }}</mat-icon></span
+            >
+            <span class="label">{{ item.label }}</span>
+          </a>
+        }
+      </nav>
+    }
+  </mat-sidenav-content>
+</mat-sidenav-container>

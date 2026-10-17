@@ -1,0 +1,40 @@
+@let h = habit();
+<a class="link" [routerLink]="['/habits', h.id]">
+  <app-habit-avatar [icon]="h.icon" [color]="h.color" />
+  <div class="text">
+    <span class="name">
+      {{ h.name }}
+      @if (h.kind === 'break') {
+        <span class="kind">breaking</span>
+      }
+    </span>
+    @if (cue()) {
+      <span class="cue">{{ cue() }}</span>
+    }
+    @if (h.easyNote) {
+      <span class="easy"><mat-icon aria-hidden="true">timer</mat-icon>{{ h.easyNote }}</span>
+    }
+  </div>
+</a>
+<span
+  class="streak"
+  [class.hot]="h.stats.currentStreak >= 3"
+  [matTooltip]="'Current streak · best ' + h.stats.longestStreak"
+>
+  <mat-icon aria-hidden="true">local_fire_department</mat-icon>
+  <span class="visually-hidden">Streak</span>{{ h.stats.currentStreak }}
+</span>
+<button
+  type="button"
+  class="check"
+  [class.checked]="h.stats.completedToday"
+  [disabled]="pending()"
+  [attr.aria-pressed]="h.stats.completedToday"
+  [attr.aria-label]="label()"
+  (click)="toggled.emit(h)"
+>
+  <svg viewBox="0 0 100 100" aria-hidden="true">
+    <path [attr.d]="checkPath()" [style.d]="checkCss()" />
+  </svg>
+  <mat-icon aria-hidden="true">check</mat-icon>
+</button>

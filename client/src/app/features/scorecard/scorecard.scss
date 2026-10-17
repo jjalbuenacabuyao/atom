@@ -1,0 +1,117 @@
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font: var(--mat-sys-label-large);
+}
+
+.positive {
+  --tone: var(--atom-success);
+  --tone-container: var(--atom-success-container);
+  --on-tone-container: var(--atom-on-success-container);
+}
+
+.neutral {
+  --tone: var(--mat-sys-outline);
+  --tone-container: var(--mat-sys-surface-container-highest);
+  --on-tone-container: var(--mat-sys-on-surface);
+}
+
+.negative {
+  --tone: var(--mat-sys-error);
+  --tone-container: var(--mat-sys-error-container);
+  --on-tone-container: var(--mat-sys-on-error-container);
+}
+
+.pill {
+  background: var(--tone-container);
+  color: var(--on-tone-container);
+}
+
+.add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0 12px;
+  padding: 16px 16px 0;
+  border-radius: var(--atom-radius-lg);
+  background: var(--mat-sys-surface-container-low);
+  margin-bottom: 16px;
+
+  .time {
+    width: 200px;
+  }
+
+  .desc {
+    flex: 1 1 240px;
+  }
+
+  .rating,
+  button {
+    margin-top: 4px;
+    margin-bottom: 20px;
+    height: 48px;
+  }
+}
+
+.form-error {
+  color: var(--mat-sys-error);
+}
+
+.entries {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px 6px 6px;
+  border-radius: var(--atom-radius-md);
+  background: var(--mat-sys-surface-container-low);
+  border-left: 4px solid var(--tone);
+}
+
+.symbol {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font: var(--mat-sys-title-medium);
+  background: var(--tone-container);
+  color: var(--on-tone-container);
+}
+
+.when {
+  width: 72px;
+  flex: none;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.what {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rating.small {
+  --mat-button-toggle-height: 36px;
+  display: none;
+
+  @media (min-width: 600px) {
+    display: inline-flex;
+  }
+}

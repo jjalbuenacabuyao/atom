@@ -1,0 +1,233 @@
+// Atom global styles: Angular Material M3 theme + app-wide tokens.
+// Learn more: https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+@use './styles/theme-colors' as atom;
+@use './styles/expressive';
+
+html {
+  height: 100%;
+  // `light dark` follows the OS preference; ThemeService narrows it to a
+  // single scheme when the user picks one explicitly.
+  color-scheme: light dark;
+
+  @include mat.theme(
+    (
+      color: (
+        primary: atom.$primary-palette,
+        tertiary: atom.$tertiary-palette,
+        theme-type: color-scheme,
+      ),
+      typography: (
+        plain-family: 'Inter, system-ui, sans-serif',
+        brand-family: 'Fraunces, Georgia, serif',
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+
+  // Material 3 Expressive: shape scale, springs and component overrides.
+  @include expressive.tokens;
+
+  // App-level semantic tokens derived from the M3 system variables.
+  --atom-radius-lg: var(--atom-shape-xl);
+  --atom-radius-md: var(--atom-shape-lg-increased);
+  --atom-success: light-dark(#1b6d3a, #8fd9a4);
+  --atom-success-container: light-dark(#c4f0cf, #0f5229);
+  --atom-on-success-container: light-dark(#00210c, #c4f0cf);
+  --atom-heat-0: var(--mat-sys-surface-container-highest);
+  --atom-heat-1: color-mix(
+    in srgb,
+    var(--mat-sys-primary) 30%,
+    var(--mat-sys-surface-container-highest)
+  );
+  --atom-heat-2: color-mix(
+    in srgb,
+    var(--mat-sys-primary) 55%,
+    var(--mat-sys-surface-container-highest)
+  );
+  --atom-heat-3: color-mix(
+    in srgb,
+    var(--mat-sys-primary) 78%,
+    var(--mat-sys-surface-container-highest)
+  );
+  --atom-heat-4: var(--mat-sys-primary);
+}
+
+html.theme-light {
+  color-scheme: light;
+}
+
+html.theme-dark {
+  color-scheme: dark;
+}
+
+@media (prefers-contrast: more) {
+  html {
+    @include atom.high-contrast-overrides(color-scheme);
+  }
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+@include expressive.global-styles;
+
+a {
+  color: var(--mat-sys-primary);
+}
+
+// Shared page layout helpers.
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+
+  // Leave room for the FAB and navigation bar on compact screens.
+  @media (max-width: 839.98px) {
+    padding-bottom: 176px;
+  }
+
+  @media (min-width: 840px) {
+    padding: 32px 32px 96px;
+  }
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  // M3 Expressive "emphasized" display style for page titles.
+  h1 {
+    font: var(--mat-sys-display-small);
+    font-family: var(--mat-sys-display-small-font);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-large);
+  }
+}
+
+.eyebrow {
+  font: var(--mat-sys-label-large);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mat-sys-primary);
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// On compact screens, keep snackbars above the FAB-free zone of the nav bar.
+@media (max-width: 839.98px) {
+  .mat-mdc-snack-bar-container {
+    margin-bottom: 96px !important;
+  }
+}
+
+.page-loading {
+  display: grid;
+  place-items: center;
+  padding: 96px 0;
+}
+
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 48px 16px;
+  text-align: center;
+  border-radius: var(--atom-radius-lg);
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface-variant);
+
+  // The icon sits on an M3 Expressive "sunny" shape.
+  > mat-icon {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    width: 104px;
+    height: 104px;
+    margin-bottom: 8px;
+    font-size: 48px;
+    color: var(--mat-sys-on-primary-container);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: var(--mat-sys-primary-container);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50.0 0.0 L53.2 0.7 L56.3 2.5 L58.9 5.0 L61.3 7.7 L63.6 9.9 L66.0 11.4 L68.7 12.1 L71.9 12.1 L75.5 11.9 L79.2 12.0 L82.6 12.8 L85.4 14.6 L87.2 17.4 L88.0 20.8 L88.1 24.5 L87.9 28.1 L87.9 31.3 L88.6 34.0 L90.1 36.4 L92.3 38.7 L95.0 41.1 L97.5 43.7 L99.3 46.8 L100.0 50.0 L99.3 53.2 L97.5 56.3 L95.0 58.9 L92.3 61.3 L90.1 63.6 L88.6 66.0 L87.9 68.7 L87.9 71.9 L88.1 75.5 L88.0 79.2 L87.2 82.6 L85.4 85.4 L82.6 87.2 L79.2 88.0 L75.5 88.1 L71.9 87.9 L68.7 87.9 L66.0 88.6 L63.6 90.1 L61.3 92.3 L58.9 95.0 L56.3 97.5 L53.2 99.3 L50.0 100.0 L46.8 99.3 L43.7 97.5 L41.1 95.0 L38.7 92.3 L36.4 90.1 L34.0 88.6 L31.3 87.9 L28.1 87.9 L24.5 88.1 L20.8 88.0 L17.4 87.2 L14.6 85.4 L12.8 82.6 L12.0 79.2 L11.9 75.5 L12.1 71.9 L12.1 68.7 L11.4 66.0 L9.9 63.6 L7.7 61.3 L5.0 58.9 L2.5 56.3 L0.7 53.2 L0.0 50.0 L0.7 46.8 L2.5 43.7 L5.0 41.1 L7.7 38.7 L9.9 36.4 L11.4 34.0 L12.1 31.3 L12.1 28.1 L11.9 24.5 L12.0 20.8 L12.8 17.4 L14.6 14.6 L17.4 12.8 L20.8 12.0 L24.5 11.9 L28.1 12.1 L31.3 12.1 L34.0 11.4 L36.4 9.9 L38.7 7.7 L41.1 5.0 L43.7 2.5 L46.8 0.7 Z'/%3E%3C/svg%3E")
+        center / contain no-repeat;
+      transition: transform var(--atom-spring-slow-duration) var(--atom-spring-default);
+    }
+  }
+
+  &:hover > mat-icon::before {
+    transform: rotate(45deg);
+  }
+
+  h2 {
+    font: var(--mat-sys-title-large);
+    color: var(--mat-sys-on-surface);
+  }
+
+  p {
+    max-width: 44ch;
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

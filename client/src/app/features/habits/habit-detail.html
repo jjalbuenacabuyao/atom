@@ -1,0 +1,161 @@
+<div class="page">
+  @if (habit.error()) {
+    <div class="empty-state" role="alert">
+      <mat-icon>search_off</mat-icon>
+      <h2>Habit not found</h2>
+      <a mat-stroked-button routerLink="/habits">Back to habits</a>
+    </div>
+  } @else if (!h()) {
+    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading habit" /></div>
+  } @else {
+    @let habit = h()!;
+    <header class="hero" [style.--habit-color]="habit.color">
+      <a mat-icon-button routerLink="/habits" aria-label="Back to habits" class="back">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <app-habit-avatar [icon]="habit.icon" [color]="habit.color" [size]="72" />
+      <div class="title">
+        <span class="eyebrow">
+          {{ habit.kind === 'break' ? 'Breaking' : 'Building' }} · {{ scheduleLabel() }}
+        </span>
+        <h1>{{ habit.name }}</h1>
+        @if (habit.identity) {
+          <p class="identity"><mat-icon>person_heart</mat-icon>{{ habit.identity.statement }}</p>
+        }
+        @if (habit.archivedAt) {
+          <p class="archived"><mat-icon>inventory_2</mat-icon>Archived</p>
+        }
+      </div>
+      <div class="actions">
+        <button mat-stroked-button (click)="share()"><mat-icon>ios_share</mat-icon>Share</button>
+        @if (!habit.archivedAt) {
+          <a mat-stroked-button [routerLink]="['/habits', habit.id, 'edit']">
+            <mat-icon>edit</mat-icon>Edit
+          </a>
+        }
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="More actions">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+          @if (habit.archivedAt) {
+            <button mat-menu-item (click)="restore()">
+              <mat-icon>unarchive</mat-icon><span>Restore</span>
+            </button>
+          } @else {
+            <button mat-menu-item (click)="archive()">
+              <mat-icon>archive</mat-icon><span>Archive</span>
+            </button>
+          }
+          <button mat-menu-item (click)="remove()">
+            <mat-icon>delete</mat-icon><span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
+    </header>
+
+    @if (habit.stats.neverMissTwice) {
+      <aside class="banner" role="status">
+        <mat-icon>priority_high</mat-icon>
+        <span>
+          <strong>Never miss twice.</strong> You missed last time — get back on track today, even if
+          it is just the two-minute version.
+        </span>
+      </aside>
+    }
+
+    <section class="stats" aria-label="Statistics">
+      <div class="stat">
+        <span class="value">{{ habit.stats.currentStreak }}</span>
+        <span class="label">Current streak</span>
+      </div>
+      <div class="stat">
+        <span class="value">{{ habit.stats.longestStreak }}</span>
+        <span class="label">Longest streak</span>
+      </div>
+      <div class="stat">
+        <span class="value">{{ habit.stats.totalVotes }}</span>
+        <span class="label">Votes cast</span>
+      </div>
+      <div class="stat">
+        <span class="value">{{ ratePercent() }}%</span>
+        <span class="label">Last 30 days</span>
+      </div>
+      <div class="stat compound">
+        <span class="value">×{{ habit.stats.compound }}</span>
+        <span class="label">1% better each time</span>
+      </div>
+    </section>
+
+    <mat-card appearance="outlined" class="calendar">
+      <mat-card-header>
+        <mat-card-title>Habit tracker</mat-card-title>
+        <mat-card-subtitle>
+          Tap a day to {{ habit.kind === 'break' ? 'mark it resisted' : 'check it off' }} or undo
+          it.
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (busy()) {
+          <mat-progress-bar mode="indeterminate" class="busy" />
+        }
+        <app-heatmap
+          [days]="days()"
+          [interactive]="!habit.archivedAt"
+          [fill]="true"
+          (capacityChange)="weeks.set($event)"
+          [isDisabled]="isOutOfRange()"
+          (dayToggled)="toggleDay($event)"
+        />
+      </mat-card-content>
+    </mat-card>
+
+    <section class="plan">
+      <h2>Your Four Laws plan</h2>
+      <div class="laws">
+        <article class="law">
+          <span class="num" aria-hidden="true">1</span>
+          <h3>{{ laws().obvious.title }}</h3>
+          <p class="sentence">{{ intention() }}</p>
+          @if (habit.stackAfter) {
+            <p class="sentence">
+              After {{ lower(habit.stackAfter) }}, I will {{ lower(habit.name) }}.
+            </p>
+          }
+          @if (habit.obviousNote) {
+            <p>{{ habit.obviousNote }}</p>
+          }
+        </article>
+        <article class="law">
+          <span class="num" aria-hidden="true">2</span>
+          <h3>{{ laws().attractive.title }}</h3>
+          <p [class.unset]="!habit.attractiveNote">
+            {{ habit.attractiveNote || laws().attractive.prompt }}
+          </p>
+        </article>
+        <article class="law">
+          <span class="num" aria-hidden="true">3</span>
+          <h3>{{ laws().easy.title }}</h3>
+          <p [class.unset]="!habit.easyNote">{{ habit.easyNote || laws().easy.prompt }}</p>
+        </article>
+        <article class="law">
+          <span class="num" aria-hidden="true">4</span>
+          <h3>{{ laws().satisfying.title }}</h3>
+          <p [class.unset]="!habit.satisfyingNote">
+            {{ habit.satisfyingNote || laws().satisfying.prompt }}
+          </p>
+        </article>
+      </div>
+    </section>
+
+    @if (notes().length) {
+      <section class="notes">
+        <h2>Recent notes</h2>
+        @for (log of notes(); track log.date) {
+          <p>
+            <strong>{{ log.date }}</strong> — {{ log.note }}
+          </p>
+        }
+      </section>
+    }
+  }
+</div>

@@ -1,0 +1,298 @@
+// Material 3 Expressive layer on top of Angular Material's M3 theme.
+//
+// M3 Expressive adds a richer shape scale, spring-based motion, emphasized
+// typography and new component treatments (shape-morphing buttons, connected
+// button groups, segmented lists). Angular Material does not ship these yet, so
+// they are implemented here with system tokens and component overrides.
+@use '@angular/material' as mat;
+
+@mixin tokens {
+  // --- Shape scale (M3 Expressive) ---------------------------------------
+  --atom-shape-xs: 4px;
+  --atom-shape-sm: 8px;
+  --atom-shape-md: 12px;
+  --atom-shape-lg: 16px;
+  --atom-shape-lg-increased: 20px;
+  --atom-shape-xl: 28px;
+  --atom-shape-xl-increased: 32px;
+  --atom-shape-2xl: 48px;
+  --atom-shape-full: 999px;
+
+  // --- Motion: springs sampled into CSS linear() easings -------------------
+  // Expressive motion scheme. Spatial springs overshoot; effects do not.
+  // fast: damping 0.6, stiffness 800 · default: 0.8 / 380 · slow: 0.8 / 200
+  --atom-spring-fast: linear(
+    0,
+    0.033,
+    0.118,
+    0.235,
+    0.367,
+    0.503,
+    0.631,
+    0.748,
+    0.847,
+    0.929,
+    0.992,
+    1.038,
+    1.069,
+    1.087,
+    1.094,
+    1.094,
+    1.087,
+    1.077,
+    1.065,
+    1.052,
+    1.04,
+    1.028,
+    1.018,
+    1.01,
+    1.003,
+    0.998,
+    0.994,
+    0.992,
+    0.991,
+    0.991,
+    0.991,
+    0.992,
+    0.993,
+    0.995,
+    0.996,
+    0.997,
+    1
+  );
+  --atom-spring-fast-duration: 350ms;
+  --atom-spring-default: linear(
+    0,
+    0.022,
+    0.078,
+    0.155,
+    0.245,
+    0.339,
+    0.432,
+    0.521,
+    0.603,
+    0.677,
+    0.742,
+    0.799,
+    0.846,
+    0.886,
+    0.919,
+    0.945,
+    0.966,
+    0.982,
+    0.994,
+    1.002,
+    1.008,
+    1.012,
+    1.014,
+    1.015,
+    1.015,
+    1.014,
+    1.013,
+    1.012,
+    1.011,
+    1.009,
+    1.008,
+    1.007,
+    1.005,
+    1.004,
+    1.003,
+    1.003,
+    1
+  );
+  --atom-spring-default-duration: 410ms;
+  --atom-spring-slow-duration: 570ms;
+  --atom-ease-effects: cubic-bezier(0.2, 0, 0, 1);
+
+  // --- Material component overrides ----------------------------------------
+  @include mat.button-overrides(
+    (
+      filled-container-shape: var(--atom-shape-full),
+      outlined-container-shape: var(--atom-shape-full),
+      protected-container-shape: var(--atom-shape-full),
+      tonal-container-shape: var(--atom-shape-full),
+      text-container-shape: var(--atom-shape-full),
+      filled-container-height: 44px,
+      outlined-container-height: 44px,
+      tonal-container-height: 44px,
+      protected-container-height: 44px,
+      text-container-height: 44px,
+    )
+  );
+  @include mat.icon-button-overrides(
+    (
+      container-shape: var(--atom-shape-full),
+    )
+  );
+  @include mat.fab-overrides(
+    (
+      container-shape: var(--atom-shape-lg-increased),
+      extended-container-shape: var(--atom-shape-lg-increased),
+      extended-container-height: 64px,
+    )
+  );
+  @include mat.card-overrides(
+    (
+      elevated-container-shape: var(--atom-shape-xl),
+      outlined-container-shape: var(--atom-shape-xl),
+      filled-container-shape: var(--atom-shape-xl),
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      container-shape: var(--atom-shape-xl-increased),
+    )
+  );
+  @include mat.menu-overrides(
+    (
+      container-shape: var(--atom-shape-lg),
+    )
+  );
+  @include mat.snack-bar-overrides(
+    (
+      container-shape: var(--atom-shape-lg),
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: var(--atom-shape-md),
+    )
+  );
+  @include mat.list-overrides(
+    (
+      active-indicator-shape: var(--atom-shape-full),
+      list-item-container-shape: var(--atom-shape-full),
+    )
+  );
+  // Connected button groups: tonal segments, selected segment in primary.
+  @include mat.button-toggle-overrides(
+    (
+      background-color: var(--mat-sys-surface-container-highest),
+      text-color: var(--mat-sys-on-surface),
+      selected-state-background-color: var(--mat-sys-primary),
+      selected-state-text-color: var(--mat-sys-on-primary),
+      divider-color: transparent,
+      shape: var(--atom-shape-full),
+      height: 44px,
+    )
+  );
+}
+
+@mixin global-styles {
+  // --- Shape-morphing press feedback ---------------------------------------
+  // Buttons are pills at rest and morph toward a rounded square while pressed.
+  .mat-mdc-button-base:not(.mat-mdc-fab-base) {
+    transition:
+      border-radius var(--atom-spring-fast-duration) var(--atom-spring-fast),
+      box-shadow 280ms var(--atom-ease-effects),
+      background-color 200ms var(--atom-ease-effects);
+
+    &:active:not(:disabled) {
+      border-radius: var(--atom-shape-md);
+    }
+  }
+
+  .mat-mdc-icon-button:active:not(:disabled) {
+    border-radius: var(--atom-shape-md);
+  }
+
+  .mat-mdc-fab-base {
+    transition:
+      border-radius var(--atom-spring-fast-duration) var(--atom-spring-fast),
+      box-shadow 280ms var(--atom-ease-effects);
+
+    &:active {
+      border-radius: var(--atom-shape-xl);
+    }
+  }
+
+  // --- Connected button groups ---------------------------------------------
+  // Segments are separated by a small gap; inner corners are tight, outer
+  // corners are pills, and the selected segment morphs to a full pill.
+  .mat-button-toggle-group.mat-button-toggle-group-appearance-standard {
+    gap: 2px;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+
+    .mat-button-toggle {
+      border: 0;
+      border-radius: var(--atom-shape-sm);
+      overflow: hidden;
+      transition: border-radius var(--atom-spring-fast-duration) var(--atom-spring-fast);
+    }
+
+    .mat-button-toggle + .mat-button-toggle {
+      border-left: 0;
+    }
+
+    .mat-button-toggle:first-child {
+      border-top-left-radius: var(--atom-shape-full);
+      border-bottom-left-radius: var(--atom-shape-full);
+    }
+
+    .mat-button-toggle:last-child {
+      border-top-right-radius: var(--atom-shape-full);
+      border-bottom-right-radius: var(--atom-shape-full);
+    }
+
+    .mat-button-toggle-checked {
+      border-radius: var(--atom-shape-full);
+    }
+
+    .mat-button-toggle-label-content {
+      padding: 0 20px;
+      font-weight: 600;
+    }
+  }
+
+  // --- Segmented lists -------------------------------------------------------
+  // Items are connected with a small gap; only the group's outer corners are
+  // large. Specificity beats component :host styles.
+  .segmented {
+    display: grid;
+    gap: 3px;
+
+    > :nth-child(n) {
+      border-radius: var(--atom-shape-sm);
+    }
+
+    > :first-child {
+      border-top-left-radius: var(--atom-shape-xl);
+      border-top-right-radius: var(--atom-shape-xl);
+    }
+
+    > :last-child {
+      border-bottom-left-radius: var(--atom-shape-xl);
+      border-bottom-right-radius: var(--atom-shape-xl);
+    }
+  }
+
+  // --- Page transitions --------------------------------------------------------
+  // Only the main content animates (navigation stays put), rising in on a spring.
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  ::view-transition-old(atom-main) {
+    animation: 120ms var(--atom-ease-effects) both atom-fade-out;
+  }
+
+  ::view-transition-new(atom-main) {
+    animation: var(--atom-spring-default-duration) var(--atom-spring-default) both atom-rise-in;
+  }
+
+  @keyframes atom-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes atom-rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.98);
+    }
+  }
+}

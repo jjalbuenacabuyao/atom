@@ -1,0 +1,283 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">{{ isEdit() ? 'Redesign your system' : 'Design a new habit' }}</span>
+      <h1>{{ isEdit() ? 'Edit habit' : 'New habit' }}</h1>
+      <p>Walk through the Four Laws of Behavior Change to make it stick.</p>
+    </div>
+    <a mat-button [routerLink]="isEdit() ? ['/habits', id()] : '/habits'">Cancel</a>
+  </header>
+
+  @if (isEdit() && existing.isLoading()) {
+    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading habit" /></div>
+  } @else if (isEdit() && existing.error()) {
+    <div class="empty-state" role="alert">
+      <mat-icon>error</mat-icon>
+      <h2>Habit not found</h2>
+      <a mat-stroked-button routerLink="/habits">Back to habits</a>
+    </div>
+  } @else {
+    @if (habitForm().submitting()) {
+      <mat-progress-bar mode="indeterminate" class="saving" />
+    }
+    <form (submit)="onSubmit($event)" novalidate>
+      @for (error of habitForm().errors(); track error) {
+        <p class="form-error" role="alert"><mat-icon>error</mat-icon>{{ error.message }}</p>
+      }
+
+      <mat-stepper
+        #stepper
+        [orientation]="vertical() ? 'vertical' : 'horizontal'"
+        [linear]="false"
+        class="stepper"
+        animationDuration="250"
+      >
+        <!-- Step 1: the habit and the identity it votes for -->
+        <mat-step
+          label="Habit"
+          [hasError]="habitForm.name().invalid() && habitForm.name().touched()"
+        >
+          <div class="step">
+            <mat-button-toggle-group
+              [formField]="habitForm.kind"
+              aria-label="Habit type"
+              class="kind-toggle"
+            >
+              <mat-button-toggle value="build">
+                <span class="toggle-label"><mat-icon>trending_up</mat-icon>Build</span>
+              </mat-button-toggle>
+              <mat-button-toggle value="break">
+                <span class="toggle-label"><mat-icon>block</mat-icon>Break</span>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <mat-form-field class="full-width">
+              <mat-label>{{ isBreak() ? 'Habit to break' : 'Habit to build' }}</mat-label>
+              <input
+                matInput
+                [formField]="habitForm.name"
+                [placeholder]="isBreak() ? 'Scroll social media in bed' : 'Read before bed'"
+              />
+              @if (habitForm.name().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <h3>Who does this habit help you become?</h3>
+            <p class="hint">
+              The most effective way to change your habits is to focus on who you wish to become,
+              not on what you want to achieve.
+            </p>
+            <div class="row">
+              <mat-form-field class="grow">
+                <mat-label>Identity</mat-label>
+                <mat-select [formField]="habitForm.identityId">
+                  <mat-option value="">No identity</mat-option>
+                  @for (identity of identities.value(); track identity.id) {
+                    <mat-option [value]="identity.id">{{ identity.statement }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field class="grow">
+                <mat-label>…or create a new one</mat-label>
+                <input matInput [formField]="habitForm.newIdentity" placeholder="I am a reader" />
+                @if (habitForm.newIdentity().errors()[0]; as error) {
+                  <mat-error>{{ error.message }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="actions">
+              <button mat-flat-button type="button" matStepperNext>Next</button>
+            </div>
+          </div>
+        </mat-step>
+
+        <!-- Step 2: Law 1 -->
+        <mat-step [label]="laws().obvious.title">
+          <div class="step">
+            <p class="law-tag">1st Law · {{ laws().obvious.subtitle }}</p>
+            @if (!isBreak()) {
+              <h3>Implementation intention</h3>
+              <p class="hint">
+                People who make a specific plan for when and where they will act are far more likely
+                to follow through.
+              </p>
+            } @else {
+              <h3>Know your triggers</h3>
+              <p class="hint">When and where does this habit usually happen?</p>
+            }
+            <div class="row">
+              <app-time-field class="grow" label="Time" [formField]="habitForm.cueTime" />
+              <mat-form-field class="grow">
+                <mat-label>Location</mat-label>
+                <input matInput [formField]="habitForm.cueLocation" placeholder="the living room" />
+              </mat-form-field>
+            </div>
+            <blockquote class="preview">{{ intention() }}</blockquote>
+
+            @if (!isBreak()) {
+              <h3>Habit stacking</h3>
+              <p class="hint">Pair the new habit with something you already do every day.</p>
+              <mat-form-field class="full-width">
+                <mat-label>After I…</mat-label>
+                <input
+                  matInput
+                  [formField]="habitForm.stackAfter"
+                  placeholder="pour my morning coffee"
+                />
+              </mat-form-field>
+              @if (stack()) {
+                <blockquote class="preview">{{ stack() }}</blockquote>
+              }
+            }
+
+            <mat-form-field class="full-width">
+              <mat-label>{{ isBreak() ? 'Remove the cue' : 'Design your environment' }}</mat-label>
+              <textarea
+                matInput
+                rows="2"
+                [formField]="habitForm.obviousNote"
+                [placeholder]="laws().obvious.placeholder"
+              ></textarea>
+              <mat-hint>{{ laws().obvious.prompt }}</mat-hint>
+            </mat-form-field>
+
+            <div class="actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-flat-button type="button" matStepperNext>Next</button>
+            </div>
+          </div>
+        </mat-step>
+
+        <!-- Step 3: Law 2 -->
+        <mat-step [label]="laws().attractive.title">
+          <div class="step">
+            <p class="law-tag">2nd Law · {{ laws().attractive.subtitle }}</p>
+            <h3>{{ laws().attractive.title }}</h3>
+            <p class="hint">{{ laws().attractive.prompt }}</p>
+            <mat-form-field class="full-width">
+              <mat-label>{{ isBreak() ? 'Reframe it' : 'Temptation bundle' }}</mat-label>
+              <textarea
+                matInput
+                rows="3"
+                [formField]="habitForm.attractiveNote"
+                [placeholder]="laws().attractive.placeholder"
+              ></textarea>
+            </mat-form-field>
+            <div class="actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-flat-button type="button" matStepperNext>Next</button>
+            </div>
+          </div>
+        </mat-step>
+
+        <!-- Step 4: Law 3 -->
+        <mat-step [label]="laws().easy.title">
+          <div class="step">
+            <p class="law-tag">3rd Law · {{ laws().easy.subtitle }}</p>
+            <h3>{{ isBreak() ? 'Increase friction' : 'The two-minute rule' }}</h3>
+            <p class="hint">{{ laws().easy.prompt }}</p>
+            <mat-form-field class="full-width">
+              <mat-label>{{ isBreak() ? 'Add friction' : 'Two-minute version' }}</mat-label>
+              <textarea
+                matInput
+                rows="2"
+                [formField]="habitForm.easyNote"
+                [placeholder]="laws().easy.placeholder"
+              ></textarea>
+              @if (!isBreak()) {
+                <mat-hint>A habit must be established before it can be improved.</mat-hint>
+              }
+            </mat-form-field>
+            <div class="actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-flat-button type="button" matStepperNext>Next</button>
+            </div>
+          </div>
+        </mat-step>
+
+        <!-- Step 5: Law 4 -->
+        <mat-step [label]="laws().satisfying.title">
+          <div class="step">
+            <p class="law-tag">4th Law · {{ laws().satisfying.subtitle }}</p>
+            <h3>{{ laws().satisfying.title }}</h3>
+            <p class="hint">{{ laws().satisfying.prompt }}</p>
+            <mat-form-field class="full-width">
+              <mat-label>{{ isBreak() ? 'Accountability' : 'Immediate reward' }}</mat-label>
+              <textarea
+                matInput
+                rows="2"
+                [formField]="habitForm.satisfyingNote"
+                [placeholder]="laws().satisfying.placeholder"
+              ></textarea>
+            </mat-form-field>
+            <div class="actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-flat-button type="button" matStepperNext>Next</button>
+            </div>
+          </div>
+        </mat-step>
+
+        <!-- Step 6: schedule & appearance -->
+        <mat-step label="Schedule">
+          <div class="step">
+            <h3>When will you show up?</h3>
+            <p class="hint">{{ schedule() }} · Missed days only count when a habit is scheduled.</p>
+            <app-weekday-picker [formField]="habitForm.scheduleDays" />
+
+            <mat-form-field class="start-date">
+              <mat-label>Start date</mat-label>
+              <input matInput type="date" [formField]="habitForm.startDate" />
+              @if (habitForm.startDate().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <h3>Make it yours</h3>
+            <div class="appearance">
+              <app-habit-avatar [icon]="model().icon" [color]="model().color" [size]="64" />
+              <div class="pickers">
+                <div class="swatches" role="group" aria-label="Color">
+                  @for (color of colors; track color) {
+                    <button
+                      type="button"
+                      class="swatch"
+                      [style.background]="color"
+                      [class.selected]="model().color === color"
+                      [attr.aria-pressed]="model().color === color"
+                      [attr.aria-label]="'Color ' + color"
+                      (click)="model.update((m) => ({ ...m, color }))"
+                    ></button>
+                  }
+                </div>
+                <div class="icons" role="group" aria-label="Icon">
+                  @for (icon of icons; track icon) {
+                    <button
+                      mat-icon-button
+                      type="button"
+                      [class.selected]="model().icon === icon"
+                      [attr.aria-pressed]="model().icon === icon"
+                      [attr.aria-label]="'Icon ' + icon"
+                      (click)="model.update((m) => ({ ...m, icon }))"
+                    >
+                      <mat-icon>{{ icon }}</mat-icon>
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button mat-button type="button" matStepperPrevious>Back</button>
+              <button mat-flat-button type="submit" [disabled]="habitForm().submitting()">
+                <mat-icon>check</mat-icon>
+                {{ isEdit() ? 'Save changes' : 'Create habit' }}
+              </button>
+            </div>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </form>
+  }
+</div>

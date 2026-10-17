@@ -1,0 +1,50 @@
+<section class="auth-card">
+  @if (loginForm().submitting()) {
+    <mat-progress-bar mode="indeterminate" class="progress" />
+  }
+  <app-logo [size]="40" class="mobile-logo" />
+  <h1>Welcome back</h1>
+  <p class="lede">Every check-in is a vote for the person you want to become.</p>
+
+  <form (submit)="onSubmit($event)" novalidate>
+    @for (error of loginForm().errors(); track error) {
+      <p class="form-error" role="alert"><mat-icon>error</mat-icon>{{ error.message }}</p>
+    }
+
+    <mat-form-field class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" autocomplete="email" [formField]="loginForm.email" />
+      @if (loginForm.email().errors()[0]; as error) {
+        <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="hidePassword() ? 'password' : 'text'"
+        autocomplete="current-password"
+        [formField]="loginForm.password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="hidePassword.set(!hidePassword())"
+        [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+      >
+        <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      @if (loginForm.password().errors()[0]; as error) {
+        <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <button mat-flat-button type="submit" class="submit" [disabled]="loginForm().submitting()">
+      Sign in
+    </button>
+  </form>
+
+  <p class="switch">New to Atom? <a routerLink="/register">Create an account</a></p>
+</section>

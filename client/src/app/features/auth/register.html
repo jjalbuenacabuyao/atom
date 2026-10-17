@@ -1,0 +1,59 @@
+<section class="auth-card">
+  @if (registerForm().submitting()) {
+    <mat-progress-bar mode="indeterminate" class="progress" />
+  }
+  <app-logo [size]="40" class="mobile-logo" />
+  <h1>Start with who you want to become</h1>
+  <p class="lede">Small habits compound. Create your account and cast your first vote today.</p>
+
+  <form (submit)="onSubmit($event)" novalidate>
+    @for (error of registerForm().errors(); track error) {
+      <p class="form-error" role="alert"><mat-icon>error</mat-icon>{{ error.message }}</p>
+    }
+
+    <mat-form-field class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput autocomplete="name" [formField]="registerForm.name" />
+      @if (registerForm.name().errors()[0]; as error) {
+        <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" autocomplete="email" [formField]="registerForm.email" />
+      @if (registerForm.email().errors()[0]; as error) {
+        <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="hidePassword() ? 'password' : 'text'"
+        autocomplete="new-password"
+        [formField]="registerForm.password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="hidePassword.set(!hidePassword())"
+        [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+      >
+        <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <mat-hint>At least 8 characters</mat-hint>
+      @if (registerForm.password().errors()[0]; as error) {
+        <mat-error>{{ error.message }}</mat-error>
+      }
+    </mat-form-field>
+
+    <button mat-flat-button type="submit" class="submit" [disabled]="registerForm().submitting()">
+      Create account
+    </button>
+  </form>
+
+  <p class="switch">Already have an account? <a routerLink="/login">Sign in</a></p>
+</section>

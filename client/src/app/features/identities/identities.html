@@ -1,0 +1,85 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">Identity-based habits</span>
+      <h1>Who do you want to become?</h1>
+      <p>True behaviour change is identity change. Each check-in is a vote for one of these.</p>
+    </div>
+    <button mat-flat-button (click)="open()"><mat-icon>add</mat-icon>Add identity</button>
+  </header>
+
+  @if (welcome()) {
+    <aside class="welcome">
+      <mat-icon>waving_hand</mat-icon>
+      <div>
+        <strong>Welcome to Atom!</strong> Start by deciding the type of person you want to be. Then
+        <a routerLink="/habits/new">design a small habit</a> that proves it to yourself.
+      </div>
+    </aside>
+  }
+
+  @if (identities.isLoading() && !identities.value().length) {
+    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading identities" /></div>
+  }
+
+  @if (identities.error()) {
+    <div class="empty-state" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <h2>Could not load identities</h2>
+      <button mat-stroked-button (click)="identities.reload()">Try again</button>
+    </div>
+  } @else if (!identities.isLoading() && identities.value().length === 0) {
+    <div class="empty-state">
+      <mat-icon>person_heart</mat-icon>
+      <h2>Decide the type of person you want to be</h2>
+      <p>Pick an example to get started, or write your own.</p>
+      <div class="examples">
+        @for (example of examples; track example) {
+          <button mat-stroked-button (click)="addExample(example)">{{ example }}</button>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="grid">
+      @for (identity of identities.value(); track identity.id) {
+        <article class="card">
+          <div class="card-head">
+            <h2>{{ identity.statement }}</h2>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              [attr.aria-label]="'Actions for ' + identity.statement"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+              <button mat-menu-item (click)="open(identity)">
+                <mat-icon>edit</mat-icon><span>Edit</span>
+              </button>
+              <button mat-menu-item (click)="remove(identity)">
+                <mat-icon>delete</mat-icon><span>Remove</span>
+              </button>
+            </mat-menu>
+          </div>
+          @if (identity.description) {
+            <p class="description">{{ identity.description }}</p>
+          }
+          <div class="votes">
+            <span class="count">{{ identity.votes }}</span>
+            <span class="muted">votes · {{ identity.habitCount }} habits</span>
+          </div>
+          <div
+            class="bar"
+            role="meter"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuenow]="share(identity)"
+            [attr.aria-label]="'Share of all votes: ' + share(identity) + '%'"
+          >
+            <span [style.width.%]="share(identity)"></span>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>
