@@ -14,9 +14,9 @@ import {
   withViewTransitions,
 } from '@angular/router';
 import { routes } from './app.routes';
-import { sessionExpiredInterceptor } from './core/auth.interceptor';
-import { AuthService } from './core/auth.service';
-import { ThemeService } from './core/theme.service';
+import { sessionExpiredInterceptor } from './core/session-expired-interceptor';
+import { Session } from './core/session';
+import { Theme } from './core/theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,8 +33,8 @@ export const appConfig: ApplicationConfig = {
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
     provideAppInitializer(() => {
       inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
-      inject(ThemeService);
-      return inject(AuthService).restoreSession();
+      inject(Theme);
+      return inject(Session).restoreSession();
     }),
   ],
 };

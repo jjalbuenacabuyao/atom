@@ -11,8 +11,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { map } from 'rxjs';
-import { AuthService } from '../core/auth.service';
-import { ThemeService } from '../core/theme.service';
+import { Session } from '../core/session';
+import { Theme } from '../core/theme';
 import { Logo } from '../shared/logo';
 
 interface NavItem {
@@ -39,13 +39,14 @@ interface NavItem {
   ],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
+  host: { class: 'block h-full' },
 })
 export class Shell {
-  private readonly auth = inject(AuthService);
+  private readonly session = inject(Session);
   private readonly router = inject(Router);
-  protected readonly theme = inject(ThemeService);
+  protected readonly theme = inject(Theme);
 
-  protected readonly user = this.auth.user;
+  protected readonly user = this.session.user;
   protected readonly initials = computed(() =>
     (this.user()?.name ?? '?')
       .split(/\s+/)
@@ -61,7 +62,7 @@ export class Shell {
     { initialValue: false },
   );
 
-  protected readonly isDark = computed(() => this.theme.theme() === 'dark');
+  protected readonly isDark = computed(() => this.theme.scheme() === 'dark');
 
   protected readonly nav: NavItem[] = [
     { path: '/today', label: 'Today', icon: 'today' },
@@ -72,7 +73,7 @@ export class Shell {
   ];
 
   protected async logout(): Promise<void> {
-    await this.auth.logout();
+    await this.session.logout();
     await this.router.navigateByUrl('/login');
   }
 }

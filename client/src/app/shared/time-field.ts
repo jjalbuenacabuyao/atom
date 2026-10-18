@@ -31,7 +31,7 @@ function toDate(value: string): Date | null {
   ],
   providers: [provideNativeDateAdapter()],
   template: `
-    <mat-form-field [subscriptSizing]="subscriptSizing()">
+    <mat-form-field class="w-full" [subscriptSizing]="subscriptSizing()">
       <mat-label>{{ label() }}</mat-label>
       <input
         matInput
@@ -41,7 +41,7 @@ function toDate(value: string): Date | null {
         [disabled]="disabled()"
         (blur)="touch.emit()"
       />
-      <span matIconSuffix class="suffix">
+      <span matIconSuffix class="flex flex-nowrap items-center">
         @if (value()) {
           <button
             mat-icon-button
@@ -61,19 +61,7 @@ function toDate(value: string): Date | null {
       }
     </mat-form-field>
   `,
-  styles: `
-    :host {
-      display: block;
-    }
-    mat-form-field {
-      width: 100%;
-    }
-    .suffix {
-      display: flex;
-      align-items: center;
-      flex-wrap: nowrap;
-    }
-  `,
+  host: { class: 'block' },
 })
 export class TimeField implements FormValueControl<string> {
   /** 24h `HH:MM`, or an empty string when no time is set. */

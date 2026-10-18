@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth.service';
+import { Session } from '../../core/session';
 import { toServerErrors } from '../../shared/form-errors';
 import { Logo } from '../../shared/logo';
 
@@ -31,10 +31,9 @@ import { Logo } from '../../shared/logo';
     Logo,
   ],
   templateUrl: './register.html',
-  styleUrl: './auth-form.scss',
 })
 export class Register {
-  private readonly auth = inject(AuthService);
+  private readonly session = inject(Session);
   private readonly router = inject(Router);
 
   protected readonly hidePassword = signal(true);
@@ -53,7 +52,7 @@ export class Register {
     event.preventDefault();
     void submit(this.registerForm, async () => {
       try {
-        await this.auth.register(this.model());
+        await this.session.register(this.model());
       } catch (err) {
         return toServerErrors(this.registerForm, err);
       }

@@ -5,8 +5,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { firstValueFrom } from 'rxjs';
-import { IdentitiesService } from '../../core/identities.service';
-import type { Identity } from '../../core/models';
+import { IdentitiesApi } from '../../core/identities-api';
+import type { Identity } from '../../core/models/identity';
 import { toServerErrors } from '../../shared/form-errors';
 
 /** Creates or edits an identity statement. Closes with the saved identity. */
@@ -16,11 +16,11 @@ import { toServerErrors } from '../../shared/form-errors';
   template: `
     <form (submit)="onSubmit($event)" novalidate>
       <h2 mat-dialog-title>{{ data ? 'Edit identity' : 'Who do you want to become?' }}</h2>
-      <mat-dialog-content>
+      <mat-dialog-content class="pt-2!">
         @for (error of identityForm().errors(); track error) {
-          <p class="error" role="alert">{{ error.message }}</p>
+          <p class="my-4 text-error" role="alert">{{ error.message }}</p>
         }
-        <mat-form-field class="full-width">
+        <mat-form-field class="w-full">
           <mat-label>I am…</mat-label>
           <input
             matInput
@@ -31,7 +31,7 @@ import { toServerErrors } from '../../shared/form-errors';
             <mat-error>{{ error.message }}</mat-error>
           }
         </mat-form-field>
-        <mat-form-field class="full-width">
+        <mat-form-field class="w-full">
           <mat-label>Why it matters (optional)</mat-label>
           <textarea matInput rows="3" [formField]="identityForm.description"></textarea>
         </mat-form-field>
@@ -44,18 +44,10 @@ import { toServerErrors } from '../../shared/form-errors';
       </mat-dialog-actions>
     </form>
   `,
-  styles: `
-    mat-dialog-content {
-      padding-top: 8px !important;
-    }
-    .error {
-      color: var(--mat-sys-error);
-    }
-  `,
 })
 export class IdentityDialog {
   protected readonly data = inject<Identity | null>(MAT_DIALOG_DATA);
-  private readonly api = inject(IdentitiesService);
+  private readonly api = inject(IdentitiesApi);
   private readonly ref = inject<MatDialogRef<IdentityDialog, Identity>>(MatDialogRef);
 
   protected readonly model = signal({

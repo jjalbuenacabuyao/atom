@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { formatTime } from '../../core/dates';
-import type { Habit } from '../../core/models';
+import type { Habit } from '../../core/models/habit';
 import { lowerFirst } from '../../core/text';
 import { HabitAvatar } from '../../shared/habit-avatar';
 import { shapeCss, shapePath } from '../../shared/shapes';
@@ -16,6 +16,8 @@ import { shapeCss, shapePath } from '../../shared/shapes';
   styleUrl: './habit-row.scss',
   host: {
     role: 'listitem',
+    class:
+      'group flex items-center gap-2 rounded-lg-increased bg-surface-container-low py-2.5 pr-2 pl-3 transition-colors duration-200 [&.done]:bg-[color-mix(in_srgb,var(--habit-color)_10%,var(--mat-sys-surface-container-low))]',
     '[class.done]': 'habit().stats.completedToday',
     '[style.--habit-color]': 'habit().color',
   },

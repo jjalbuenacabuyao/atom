@@ -1,15 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { API_BASE_URL } from './api';
-import type { Credentials, Registration, User } from './models';
+import type { Credentials, Registration, User } from './models/user';
 
 /**
  * Holds the signed-in user. The session itself lives in an HttpOnly cookie
  * managed by the server, so no token is ever exposed to JavaScript.
  */
-@Injectable({ providedIn: 'root' })
-export class AuthService {
+@Service()
+export class Session {
   private readonly http = inject(HttpClient);
   private readonly base = `${inject(API_BASE_URL)}/auth`;
 

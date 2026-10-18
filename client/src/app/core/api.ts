@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { InjectionToken } from '@angular/core';
-import type { ApiError } from './models';
+import type { ApiError } from './models/api-error';
 
 /** Base URL of the Atom REST API. Same-origin by default (proxied in dev). */
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL', {

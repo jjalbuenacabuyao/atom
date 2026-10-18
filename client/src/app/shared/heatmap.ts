@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { parseIsoDate, today } from '../core/dates';
-import type { DayCount } from '../core/models';
+import type { DayCount } from '../core/models/dashboard';
 
 interface Cell {
   date: string;

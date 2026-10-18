@@ -1,32 +1,43 @@
 <div class="page">
   @if (habit.error()) {
-    <div class="empty-state" role="alert">
-      <mat-icon>search_off</mat-icon>
-      <h2>Habit not found</h2>
+    <app-empty-state role="alert" icon="search_off" heading="Habit not found">
       <a mat-stroked-button routerLink="/habits">Back to habits</a>
-    </div>
+    </app-empty-state>
   } @else if (!h()) {
-    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading habit" /></div>
+    <div class="grid place-items-center py-24">
+      <app-loading-indicator [size]="64" label="Loading habit" />
+    </div>
   } @else {
     @let habit = h()!;
-    <header class="hero" [style.--habit-color]="habit.color">
-      <a mat-icon-button routerLink="/habits" aria-label="Back to habits" class="back">
+    <header
+      class="mb-6 flex flex-wrap items-center gap-4 rounded-xl bg-[color-mix(in_srgb,var(--habit-color)_12%,var(--mat-sys-surface-container-low))] p-6"
+      [style.--habit-color]="habit.color"
+    >
+      <a mat-icon-button routerLink="/habits" aria-label="Back to habits" class="self-start">
         <mat-icon>arrow_back</mat-icon>
       </a>
       <app-habit-avatar [icon]="habit.icon" [color]="habit.color" [size]="72" />
-      <div class="title">
+      <div class="min-w-50 flex-1">
         <span class="eyebrow">
           {{ habit.kind === 'break' ? 'Breaking' : 'Building' }} · {{ scheduleLabel() }}
         </span>
-        <h1>{{ habit.name }}</h1>
+        <h1 class="type-headline-large">{{ habit.name }}</h1>
         @if (habit.identity) {
-          <p class="identity"><mat-icon>person_heart</mat-icon>{{ habit.identity.statement }}</p>
+          <p
+            class="mt-2 mr-2 inline-flex items-center gap-1.5 rounded-sm bg-surface-container-lowest px-3 py-1 type-label-large"
+          >
+            <mat-icon class="icon-4.5!">person_heart</mat-icon>{{ habit.identity.statement }}
+          </p>
         }
         @if (habit.archivedAt) {
-          <p class="archived"><mat-icon>inventory_2</mat-icon>Archived</p>
+          <p
+            class="mt-2 mr-2 inline-flex items-center gap-1.5 rounded-sm bg-surface-container-lowest px-3 py-1 type-label-large"
+          >
+            <mat-icon class="icon-4.5!">inventory_2</mat-icon>Archived
+          </p>
         }
       </div>
-      <div class="actions">
+      <div class="flex items-center gap-1">
         <button mat-stroked-button (click)="share()"><mat-icon>ios_share</mat-icon>Share</button>
         @if (!habit.archivedAt) {
           <a mat-stroked-button [routerLink]="['/habits', habit.id, 'edit']">
@@ -54,7 +65,10 @@
     </header>
 
     @if (habit.stats.neverMissTwice) {
-      <aside class="banner" role="status">
+      <aside
+        class="mb-4 flex gap-3 rounded-lg-increased bg-tertiary-container p-4 text-on-tertiary-container"
+        role="status"
+      >
         <mat-icon>priority_high</mat-icon>
         <span>
           <strong>Never miss twice.</strong> You missed last time — get back on track today, even if
@@ -63,30 +77,33 @@
       </aside>
     }
 
-    <section class="stats" aria-label="Statistics">
-      <div class="stat">
-        <span class="value">{{ habit.stats.currentStreak }}</span>
-        <span class="label">Current streak</span>
+    <section
+      class="mb-6 grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3"
+      aria-label="Statistics"
+    >
+      <div class="grid gap-1 rounded-lg-increased bg-surface-container px-5 py-4">
+        <span class="type-headline-medium text-primary">{{ habit.stats.currentStreak }}</span>
+        <span class="type-label-large text-on-surface-variant">Current streak</span>
       </div>
-      <div class="stat">
-        <span class="value">{{ habit.stats.longestStreak }}</span>
-        <span class="label">Longest streak</span>
+      <div class="grid gap-1 rounded-lg-increased bg-surface-container px-5 py-4">
+        <span class="type-headline-medium text-primary">{{ habit.stats.longestStreak }}</span>
+        <span class="type-label-large text-on-surface-variant">Longest streak</span>
       </div>
-      <div class="stat">
-        <span class="value">{{ habit.stats.totalVotes }}</span>
-        <span class="label">Votes cast</span>
+      <div class="grid gap-1 rounded-lg-increased bg-surface-container px-5 py-4">
+        <span class="type-headline-medium text-primary">{{ habit.stats.totalVotes }}</span>
+        <span class="type-label-large text-on-surface-variant">Votes cast</span>
       </div>
-      <div class="stat">
-        <span class="value">{{ ratePercent() }}%</span>
-        <span class="label">Last 30 days</span>
+      <div class="grid gap-1 rounded-lg-increased bg-surface-container px-5 py-4">
+        <span class="type-headline-medium text-primary">{{ ratePercent() }}%</span>
+        <span class="type-label-large text-on-surface-variant">Last 30 days</span>
       </div>
-      <div class="stat compound">
-        <span class="value">×{{ habit.stats.compound }}</span>
-        <span class="label">1% better each time</span>
+      <div class="grid gap-1 rounded-lg-increased bg-surface-container px-5 py-4">
+        <span class="type-headline-medium text-tertiary">×{{ habit.stats.compound }}</span>
+        <span class="type-label-large text-on-surface-variant">1% better each time</span>
       </div>
     </section>
 
-    <mat-card appearance="outlined" class="calendar">
+    <mat-card appearance="outlined" class="mb-8">
       <mat-card-header>
         <mat-card-title>Habit tracker</mat-card-title>
         <mat-card-subtitle>
@@ -94,9 +111,9 @@
           it.
         </mat-card-subtitle>
       </mat-card-header>
-      <mat-card-content>
+      <mat-card-content class="pt-4!">
         @if (busy()) {
-          <mat-progress-bar mode="indeterminate" class="busy" />
+          <mat-progress-bar mode="indeterminate" class="mb-2" />
         }
         <app-heatmap
           [days]="days()"
@@ -109,38 +126,60 @@
       </mat-card-content>
     </mat-card>
 
-    <section class="plan">
-      <h2>Your Four Laws plan</h2>
-      <div class="laws">
-        <article class="law">
-          <span class="num" aria-hidden="true">1</span>
-          <h3>{{ laws().obvious.title }}</h3>
-          <p class="sentence">{{ intention() }}</p>
+    <section>
+      <h2 class="mb-4 type-title-large">Your Four Laws plan</h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3">
+        <article class="relative rounded-lg-increased bg-surface-container-low p-5">
+          <span class="absolute top-3 right-4 type-display-small text-outline" aria-hidden="true"
+            >1</span
+          >
+          <h3 class="mb-2 type-title-medium">{{ laws().obvious.title }}</h3>
+          <p class="mb-2 font-brand text-[1.05rem]">{{ intention() }}</p>
           @if (habit.stackAfter) {
-            <p class="sentence">
+            <p class="mb-2 font-brand text-[1.05rem]">
               After {{ lower(habit.stackAfter) }}, I will {{ lower(habit.name) }}.
             </p>
           }
           @if (habit.obviousNote) {
-            <p>{{ habit.obviousNote }}</p>
+            <p class="mb-2">{{ habit.obviousNote }}</p>
           }
         </article>
-        <article class="law">
-          <span class="num" aria-hidden="true">2</span>
-          <h3>{{ laws().attractive.title }}</h3>
-          <p [class.unset]="!habit.attractiveNote">
+        <article class="relative rounded-lg-increased bg-surface-container-low p-5">
+          <span class="absolute top-3 right-4 type-display-small text-outline" aria-hidden="true"
+            >2</span
+          >
+          <h3 class="mb-2 type-title-medium">{{ laws().attractive.title }}</h3>
+          <p
+            class="mb-2"
+            [class.italic]="!habit.attractiveNote"
+            [class.text-on-surface-variant]="!habit.attractiveNote"
+          >
             {{ habit.attractiveNote || laws().attractive.prompt }}
           </p>
         </article>
-        <article class="law">
-          <span class="num" aria-hidden="true">3</span>
-          <h3>{{ laws().easy.title }}</h3>
-          <p [class.unset]="!habit.easyNote">{{ habit.easyNote || laws().easy.prompt }}</p>
+        <article class="relative rounded-lg-increased bg-surface-container-low p-5">
+          <span class="absolute top-3 right-4 type-display-small text-outline" aria-hidden="true"
+            >3</span
+          >
+          <h3 class="mb-2 type-title-medium">{{ laws().easy.title }}</h3>
+          <p
+            class="mb-2"
+            [class.italic]="!habit.easyNote"
+            [class.text-on-surface-variant]="!habit.easyNote"
+          >
+            {{ habit.easyNote || laws().easy.prompt }}
+          </p>
         </article>
-        <article class="law">
-          <span class="num" aria-hidden="true">4</span>
-          <h3>{{ laws().satisfying.title }}</h3>
-          <p [class.unset]="!habit.satisfyingNote">
+        <article class="relative rounded-lg-increased bg-surface-container-low p-5">
+          <span class="absolute top-3 right-4 type-display-small text-outline" aria-hidden="true"
+            >4</span
+          >
+          <h3 class="mb-2 type-title-medium">{{ laws().satisfying.title }}</h3>
+          <p
+            class="mb-2"
+            [class.italic]="!habit.satisfyingNote"
+            [class.text-on-surface-variant]="!habit.satisfyingNote"
+          >
             {{ habit.satisfyingNote || laws().satisfying.prompt }}
           </p>
         </article>
@@ -148,10 +187,10 @@
     </section>
 
     @if (notes().length) {
-      <section class="notes">
-        <h2>Recent notes</h2>
+      <section class="mt-8">
+        <h2 class="mb-4 type-title-large">Recent notes</h2>
         @for (log of notes(); track log.date) {
-          <p>
+          <p class="my-4">
             <strong>{{ log.date }}</strong> — {{ log.note }}
           </p>
         }

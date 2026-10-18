@@ -1,11 +1,15 @@
-<mat-sidenav-container class="container">
+<mat-sidenav-container class="h-full">
   @if (!isCompact()) {
-    <mat-sidenav mode="side" opened class="drawer">
-      <a routerLink="/today" class="brand" aria-label="Atom home">
+    <mat-sidenav mode="side" opened class="border-r-0! px-3 py-4">
+      <a
+        routerLink="/today"
+        class="flex w-fit px-3 pt-2 pb-4 text-inherit no-underline"
+        aria-label="Atom home"
+      >
         <app-logo [size]="36" />
       </a>
 
-      <a mat-fab extended routerLink="/habits/new" class="new-habit">
+      <a mat-fab extended routerLink="/habits/new" class="mx-3 mb-6 shadow-level1!">
         <mat-icon>add</mat-icon>
         New habit
       </a>
@@ -14,6 +18,7 @@
         @for (item of nav; track item.path) {
           <a
             mat-list-item
+            class="nav-item mb-1 [--mat-list-list-item-one-line-container-height:56px]"
             [routerLink]="item.path"
             routerLinkActive
             #rla="routerLinkActive"
@@ -26,20 +31,24 @@
         }
       </mat-nav-list>
 
-      <p class="quote">
+      <p class="mx-3 mt-auto mb-2 pt-6 type-body-small text-on-surface-variant italic">
         “You do not rise to the level of your goals. You fall to the level of your systems.”
       </p>
     </mat-sidenav>
   }
 
-  <mat-sidenav-content class="content">
-    <mat-toolbar class="toolbar">
+  <mat-sidenav-content>
+    <mat-toolbar class="sticky top-0 z-2 gap-1 bg-surface/88! backdrop-blur-md">
       @if (isCompact()) {
-        <a routerLink="/today" class="brand" aria-label="Atom home">
+        <a
+          routerLink="/today"
+          class="inline-flex px-3 pt-2 pb-4 text-inherit no-underline"
+          aria-label="Atom home"
+        >
           <app-logo [size]="30" />
         </a>
       }
-      <span class="spacer"></span>
+      <span class="flex-1"></span>
 
       <button
         mat-icon-button
@@ -50,18 +59,22 @@
         <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
       </button>
 
+      <!-- The avatar is 32px, so size the icon button's content box to match. -->
       <button
         mat-icon-button
+        class="[--mat-icon-button-icon-size:32px]"
         [matMenuTriggerFor]="accountMenu"
-        class="avatar-button"
         [attr.aria-label]="initials() + ', account menu'"
       >
-        <span class="avatar">{{ initials() }}</span>
+        <span
+          class="avatar grid size-8 place-items-center rounded-full bg-primary-container type-label-large text-on-primary-container"
+          >{{ initials() }}</span
+        >
       </button>
       <mat-menu #accountMenu="matMenu" xPosition="before">
-        <div class="account" role="presentation">
+        <div class="grid gap-0.5 px-4 py-3" role="presentation">
           <strong>{{ user()?.name }}</strong>
-          <span>{{ user()?.email }}</span>
+          <span class="type-body-small text-on-surface-variant">{{ user()?.email }}</span>
         </div>
         <mat-divider />
         <button mat-menu-item (click)="logout()">
@@ -71,27 +84,42 @@
       </mat-menu>
     </mat-toolbar>
 
-    <main id="main" class="main">
+    <!-- Page transitions animate only the main content (see _expressive.scss). -->
+    <main id="main" class="[view-transition-name:atom-main]">
       <router-outlet />
     </main>
 
     @if (isCompact()) {
-      <a mat-fab routerLink="/habits/new" class="fab" aria-label="New habit">
-        <mat-icon>add</mat-icon>
+      <!-- M3 Expressive medium FAB (80px; shape comes from the FAB token). -->
+      <a
+        mat-fab
+        routerLink="/habits/new"
+        class="fixed! right-4 bottom-24 z-3! size-20!"
+        aria-label="New habit"
+      >
+        <mat-icon class="icon-7!">add</mat-icon>
       </a>
 
-      <nav class="bottom-nav" aria-label="Main navigation">
+      <!-- M3 navigation bar for compact screens. -->
+      <nav
+        class="fixed inset-x-0 bottom-0 z-3 grid h-20 grid-cols-5 bg-surface-container pb-[env(safe-area-inset-bottom)]"
+        aria-label="Main navigation"
+      >
         @for (item of nav; track item.path) {
           <a
+            class="group flex flex-col items-center justify-center gap-1 type-label-medium text-on-surface-variant no-underline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-primary [&.active]:font-bold [&.active]:text-on-surface"
             [routerLink]="item.path"
             routerLinkActive="active"
             #rla="routerLinkActive"
             [attr.aria-current]="rla.isActive ? 'page' : null"
           >
-            <span class="indicator"
-              ><mat-icon>{{ item.icon }}</mat-icon></span
+            <span
+              class="grid h-8 w-16 place-items-center rounded-lg transition-colors duration-200 group-[.active]:bg-secondary-container group-[.active]:text-on-secondary-container"
+              ><mat-icon class="group-[.active]:[font-variation-settings:'FILL'_1]">{{
+                item.icon
+              }}</mat-icon></span
             >
-            <span class="label">{{ item.label }}</span>
+            <span>{{ item.label }}</span>
           </a>
         }
       </nav>

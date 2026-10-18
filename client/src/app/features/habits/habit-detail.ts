@@ -15,14 +15,17 @@ import {
   parseIsoDate,
   today,
 } from '../../core/dates';
-import { HabitsService } from '../../core/habits.service';
-import type { DayCount, Habit, HabitLog } from '../../core/models';
-import { NotifyService } from '../../core/notify.service';
+import { HabitsApi } from '../../core/habits-api';
+import type { DayCount } from '../../core/models/dashboard';
+import type { Habit } from '../../core/models/habit';
+import type { HabitLog } from '../../core/models/habit-log';
+import { Notifier } from '../../core/notifier';
 import { lowerFirst as lower } from '../../core/text';
-import { ConfirmService } from '../../shared/confirm-dialog';
+import { Confirmer } from '../../shared/confirmer';
+import { EmptyState } from '../../shared/empty-state';
 import { HabitAvatar } from '../../shared/habit-avatar';
 import { LoadingIndicator } from '../../shared/loading-indicator';
-import { ShareService } from '../share/share.service';
+import { ShareLauncher } from '../share/share-launcher';
 import { Heatmap } from '../../shared/heatmap';
 import { LAWS } from './habit-options';
 
@@ -35,19 +38,19 @@ import { LAWS } from './habit-options';
     MatIconModule,
     MatMenuModule,
     MatProgressBarModule,
+    EmptyState,
     HabitAvatar,
     LoadingIndicator,
     Heatmap,
   ],
   templateUrl: './habit-detail.html',
-  styleUrl: './habit-detail.scss',
 })
 export class HabitDetail {
-  private readonly habitsApi = inject(HabitsService);
-  private readonly notify = inject(NotifyService);
-  private readonly confirm = inject(ConfirmService);
+  private readonly habitsApi = inject(HabitsApi);
+  private readonly notify = inject(Notifier);
+  private readonly confirm = inject(Confirmer);
   private readonly router = inject(Router);
-  private readonly shareService = inject(ShareService);
+  private readonly shareLauncher = inject(ShareLauncher);
 
   /** Route parameter. */
   readonly id = input.required<string>();
@@ -134,7 +137,7 @@ export class HabitDetail {
 
   protected share(): void {
     const h = this.h();
-    if (h) void this.shareService.shareHabit(h);
+    if (h) void this.shareLauncher.shareHabit(h);
   }
 
   protected async archive(): Promise<void> {

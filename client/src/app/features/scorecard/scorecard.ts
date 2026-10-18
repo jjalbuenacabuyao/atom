@@ -10,11 +10,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { formatTime } from '../../core/dates';
-import { ScorecardService } from '../../core/scorecard.service';
-import type { Rating, ScorecardEntry } from '../../core/models';
-import { NotifyService } from '../../core/notify.service';
+import { ScorecardApi } from '../../core/scorecard-api';
+import type { Rating, ScorecardEntry } from '../../core/models/scorecard-entry';
+import { Notifier } from '../../core/notifier';
 import { toServerErrors } from '../../shared/form-errors';
+import { EmptyState } from '../../shared/empty-state';
 import { LoadingIndicator } from '../../shared/loading-indicator';
+import { PageHeader } from '../../shared/page-header';
 import { TimeField } from '../../shared/time-field';
 
 export const RATINGS: { value: Rating; symbol: string; label: string }[] = [
@@ -22,6 +24,16 @@ export const RATINGS: { value: Rating; symbol: string; label: string }[] = [
   { value: 'neutral', symbol: '=', label: 'Neutral habit' },
   { value: 'negative', symbol: '−', label: 'Bad habit' },
 ];
+
+/** Colour treatment per rating: tonal container and the entry's side stripe. */
+const TONES: Record<Rating, { container: string; stripe: string }> = {
+  positive: {
+    container: 'bg-success-container text-on-success-container',
+    stripe: 'border-success',
+  },
+  neutral: { container: 'bg-surface-container-highest text-on-surface', stripe: 'border-outline' },
+  negative: { container: 'bg-error-container text-on-error-container', stripe: 'border-error' },
+};
 
 @Component({
   selector: 'app-scorecard',
@@ -36,15 +48,17 @@ export const RATINGS: { value: Rating; symbol: string; label: string }[] = [
     MatTooltipModule,
     TimeField,
     LoadingIndicator,
+    EmptyState,
+    PageHeader,
   ],
   templateUrl: './scorecard.html',
-  styleUrl: './scorecard.scss',
 })
 export class Scorecard {
-  private readonly api = inject(ScorecardService);
-  private readonly notify = inject(NotifyService);
+  private readonly api = inject(ScorecardApi);
+  private readonly notify = inject(Notifier);
 
   protected readonly ratings = RATINGS;
+  protected readonly tones = TONES;
   protected readonly entries = httpResource<ScorecardEntry[]>(() => this.api.url, {
     defaultValue: [],
   });

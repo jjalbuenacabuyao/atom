@@ -20,35 +20,19 @@ const SEQUENCE: ShapeName[] = ['burst', 'cookie9', 'clover', 'sunny', 'cookie4',
 @Component({
   selector: 'app-loading-indicator',
   template: `
-    <svg viewBox="0 0 100 100" aria-hidden="true">
-      <g #spinner class="spinner"><path #shape [attr.d]="initial" /></g>
+    <svg viewBox="0 0 100 100" aria-hidden="true" class="size-[62%] overflow-visible">
+      <g #spinner class="origin-[50px_50px]">
+        <path #shape class="fill-on-primary-container" [attr.d]="initial" />
+      </g>
     </svg>
   `,
   host: {
+    class: 'inline-grid place-items-center rounded-full bg-primary-container',
     role: 'progressbar',
     '[attr.aria-label]': 'label()',
     '[style.width.px]': 'size()',
     '[style.height.px]': 'size()',
   },
-  styles: `
-    :host {
-      display: inline-grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--mat-sys-primary-container);
-    }
-    svg {
-      width: 62%;
-      height: 62%;
-      overflow: visible;
-    }
-    .spinner {
-      transform-origin: 50px 50px;
-    }
-    path {
-      fill: var(--mat-sys-on-primary-container);
-    }
-  `,
 })
 export class LoadingIndicator {
   readonly size = input(48);

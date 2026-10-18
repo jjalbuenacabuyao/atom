@@ -6,7 +6,7 @@ Scorecard, and "never miss twice".
 
 | Layer    | Stack                                                                         |
 | -------- | ----------------------------------------------------------------------------- |
-| Frontend | Angular 22 (standalone, zoneless, signals, Signal Forms) + Angular Material 3 |
+| Frontend | Angular 22 (standalone, zoneless, signals, Signal Forms) + Angular Material 3 (Expressive) + Tailwind CSS v4 |
 | Backend  | Go 1.27, Gin, GORM, goose migrations, slog                                    |
 | Database | PostgreSQL 16                                                                 |
 
@@ -83,7 +83,8 @@ server/
   cmd/api/                 entrypoint: config, logging, migrations, graceful shutdown
   internal/config/         12-factor configuration from environment variables
   internal/database/       GORM connection pool + embedded goose SQL migrations
-  internal/model/          GORM models
+  internal/model/          GORM models, one file per model
+  internal/dto/            API request/response contracts, one file per resource
   internal/repository/     data access (every query scoped to the user, context-aware)
   internal/service/        business logic behind small consumer-side interfaces
   internal/habitstats/     pure streak / completion-rate / never-miss-twice logic
@@ -92,6 +93,7 @@ server/
                            auth, CSRF, rate limiting, body limits
 client/src/app/
   core/                    API clients, auth state, guards, interceptors, utilities
+  core/models/             API contracts, one file per model
   layout/                  application shell (navigation drawer / bar, toolbar)
   shared/                  reusable components (heatmap, progress ring, time field…)
   features/                lazy-loaded pages: auth, today, habits, identities, scorecard, guide

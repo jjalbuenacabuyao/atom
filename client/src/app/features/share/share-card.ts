@@ -1,5 +1,6 @@
 import { parseIsoDate, toIsoDate } from '../../core/dates';
-import type { DayCount, HabitKind, HabitStats } from '../../core/models';
+import type { DayCount } from '../../core/models/dashboard';
+import type { HabitKind, HabitStats } from '../../core/models/habit';
 
 /**
  * Renders shareable progress images on a <canvas>. Everything happens in the

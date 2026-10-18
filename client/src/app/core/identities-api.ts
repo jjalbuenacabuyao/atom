@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api';
-import type { Identity, IdentityInput } from './models';
+import type { Identity, IdentityInput } from './models/identity';
 
 /** Typed client for identity endpoints. */
-@Injectable({ providedIn: 'root' })
-export class IdentitiesService {
+@Service()
+export class IdentitiesApi {
   private readonly http = inject(HttpClient);
   readonly url = `${inject(API_BASE_URL)}/identities`;
 

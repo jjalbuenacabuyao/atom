@@ -1,55 +1,66 @@
 <div class="page">
-  <header class="page-header">
-    <div>
-      <span class="eyebrow">Inspired by Atomic Habits</span>
-      <h1>The Four Laws of Behavior Change</h1>
-      <p>Every habit follows a loop: cue, craving, response, reward. Each law shapes one stage.</p>
-    </div>
+  <app-page-header
+    eyebrow="Inspired by Atomic Habits"
+    heading="The Four Laws of Behavior Change"
+    subtitle="Every habit follows a loop: cue, craving, response, reward. Each law shapes one stage."
+  >
     <a mat-flat-button routerLink="/habits/new"><mat-icon>add</mat-icon>Design a habit</a>
-  </header>
+  </app-page-header>
 
-  <ol class="loop" aria-label="The habit loop">
-    @for (law of laws; track law.n) {
-      <li>
-        <span class="stage">{{ law.stage }}</span>
-        <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+  <ol class="mb-6 flex flex-wrap gap-2" aria-label="The habit loop">
+    @for (law of laws; track law.n; let last = $last) {
+      <li class="flex items-center gap-2">
+        <span
+          class="rounded-full bg-secondary-container px-4 py-2 type-label-large text-on-secondary-container"
+          >{{ law.stage }}</span
+        >
+        <mat-icon aria-hidden="true" [class]="last ? 'rotate-180 opacity-40' : ''"
+          >arrow_forward</mat-icon
+        >
       </li>
     }
   </ol>
 
-  <section class="laws">
+  <section class="mb-10 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-4">
     @for (law of laws; track law.n) {
-      <article class="law">
-        <span class="num" aria-hidden="true">{{ law.n }}</span>
-        <p class="stage-label">{{ law.stage }}</p>
-        <h2>{{ law.build }}</h2>
-        <ul>
+      <article class="relative flex flex-col rounded-xl bg-surface-container-low p-6">
+        <span class="absolute top-3 right-5 type-display-medium text-outline" aria-hidden="true">{{
+          law.n
+        }}</span>
+        <p class="mb-1 type-label-large tracking-[0.06em] text-tertiary uppercase">
+          {{ law.stage }}
+        </p>
+        <h2 class="mb-3 type-headline-small">{{ law.build }}</h2>
+        <ul class="mb-4 grid list-disc gap-2 pl-5">
           @for (t of law.tactics; track t) {
             <li>{{ t }}</li>
           }
         </ul>
-        <div class="inverse">
-          <h3><mat-icon aria-hidden="true">block</mat-icon>To break a habit: {{ law.break }}</h3>
+        <div class="mt-auto rounded-md bg-surface-container-high px-4 py-3">
+          <h3 class="flex items-center gap-1.5 type-title-small text-error">
+            <mat-icon aria-hidden="true" class="icon-4.5!">block</mat-icon>To break a habit:
+            {{ law.break }}
+          </h3>
           @for (t of law.inverse; track t) {
-            <p>{{ t }}</p>
+            <p class="mt-1.5">{{ t }}</p>
           }
         </div>
       </article>
     }
   </section>
 
-  <h2 class="section-title">Core ideas</h2>
-  <section class="principles">
+  <h2 class="mb-4 type-title-large">Core ideas</h2>
+  <section class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
     @for (p of principles; track p.title) {
-      <article>
-        <mat-icon aria-hidden="true">{{ p.icon }}</mat-icon>
-        <h3>{{ p.title }}</h3>
-        <p>{{ p.text }}</p>
+      <article class="rounded-lg-increased border border-outline-variant p-5">
+        <mat-icon aria-hidden="true" class="text-primary">{{ p.icon }}</mat-icon>
+        <h3 class="my-2 type-title-medium">{{ p.title }}</h3>
+        <p class="text-on-surface-variant">{{ p.text }}</p>
       </article>
     }
   </section>
 
-  <p class="credit muted">
+  <p class="mt-10 mb-3 type-body-small text-on-surface-variant">
     Concepts from <em>Atomic Habits</em> by James Clear. Atom is an independent project and is not
     affiliated with the author.
   </p>

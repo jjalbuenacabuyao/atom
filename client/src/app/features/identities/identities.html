@@ -1,15 +1,16 @@
 <div class="page">
-  <header class="page-header">
-    <div>
-      <span class="eyebrow">Identity-based habits</span>
-      <h1>Who do you want to become?</h1>
-      <p>True behaviour change is identity change. Each check-in is a vote for one of these.</p>
-    </div>
+  <app-page-header
+    eyebrow="Identity-based habits"
+    heading="Who do you want to become?"
+    subtitle="True behaviour change is identity change. Each check-in is a vote for one of these."
+  >
     <button mat-flat-button (click)="open()"><mat-icon>add</mat-icon>Add identity</button>
-  </header>
+  </app-page-header>
 
   @if (welcome()) {
-    <aside class="welcome">
+    <aside
+      class="mb-6 flex gap-3 rounded-lg-increased bg-secondary-container p-4 text-on-secondary-container"
+    >
       <mat-icon>waving_hand</mat-icon>
       <div>
         <strong>Welcome to Atom!</strong> Start by deciding the type of person you want to be. Then
@@ -19,32 +20,30 @@
   }
 
   @if (identities.isLoading() && !identities.value().length) {
-    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading identities" /></div>
+    <div class="grid place-items-center py-24">
+      <app-loading-indicator [size]="64" label="Loading identities" />
+    </div>
   }
 
   @if (identities.error()) {
-    <div class="empty-state" role="alert">
-      <mat-icon>cloud_off</mat-icon>
-      <h2>Could not load identities</h2>
+    <app-empty-state role="alert" icon="cloud_off" heading="Could not load identities">
       <button mat-stroked-button (click)="identities.reload()">Try again</button>
-    </div>
+    </app-empty-state>
   } @else if (!identities.isLoading() && identities.value().length === 0) {
-    <div class="empty-state">
-      <mat-icon>person_heart</mat-icon>
-      <h2>Decide the type of person you want to be</h2>
+    <app-empty-state icon="person_heart" heading="Decide the type of person you want to be">
       <p>Pick an example to get started, or write your own.</p>
-      <div class="examples">
+      <div class="flex max-w-160 flex-wrap justify-center gap-2">
         @for (example of examples; track example) {
           <button mat-stroked-button (click)="addExample(example)">{{ example }}</button>
         }
       </div>
-    </div>
+    </app-empty-state>
   } @else {
-    <div class="grid">
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
       @for (identity of identities.value(); track identity.id) {
-        <article class="card">
-          <div class="card-head">
-            <h2>{{ identity.statement }}</h2>
+        <article class="grid content-start gap-3 rounded-xl bg-surface-container-low p-5">
+          <div class="flex items-start justify-between gap-2">
+            <h2 class="type-title-large font-brand">{{ identity.statement }}</h2>
             <button
               mat-icon-button
               [matMenuTriggerFor]="menu"
@@ -62,21 +61,24 @@
             </mat-menu>
           </div>
           @if (identity.description) {
-            <p class="description">{{ identity.description }}</p>
+            <p class="text-on-surface-variant">{{ identity.description }}</p>
           }
-          <div class="votes">
-            <span class="count">{{ identity.votes }}</span>
-            <span class="muted">votes · {{ identity.habitCount }} habits</span>
+          <div class="flex items-baseline gap-2">
+            <span class="type-display-small text-primary">{{ identity.votes }}</span>
+            <span class="text-on-surface-variant">votes · {{ identity.habitCount }} habits</span>
           </div>
           <div
-            class="bar"
+            class="h-2 overflow-hidden rounded-xs bg-surface-container-highest"
             role="meter"
             aria-valuemin="0"
             aria-valuemax="100"
             [attr.aria-valuenow]="share(identity)"
             [attr.aria-label]="'Share of all votes: ' + share(identity) + '%'"
           >
-            <span [style.width.%]="share(identity)"></span>
+            <span
+              class="block h-full rounded-xs bg-primary transition-[width] duration-400"
+              [style.width.%]="share(identity)"
+            ></span>
           </div>
         </article>
       }

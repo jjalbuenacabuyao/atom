@@ -1,15 +1,15 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { authGuard, guestGuard } from './auth.guards';
-import { AuthService } from './auth.service';
+import { authGuard, guestGuard } from './auth-guards';
+import { Session } from './session';
 
 describe('auth guards', () => {
   const signedIn = signal(false);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: AuthService, useValue: { isAuthenticated: signedIn } }],
+      providers: [{ provide: Session, useValue: { isAuthenticated: signedIn } }],
     });
   });
 

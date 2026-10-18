@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth.service';
+import { Session } from '../../core/session';
 import { toServerErrors } from '../../shared/form-errors';
 import { Logo } from '../../shared/logo';
 
@@ -23,10 +23,9 @@ import { Logo } from '../../shared/logo';
     Logo,
   ],
   templateUrl: './login.html',
-  styleUrl: './auth-form.scss',
 })
 export class Login {
-  private readonly auth = inject(AuthService);
+  private readonly session = inject(Session);
   private readonly router = inject(Router);
 
   /** Bound from the `?returnUrl=` query parameter. */
@@ -44,7 +43,7 @@ export class Login {
     event.preventDefault();
     void submit(this.loginForm, async () => {
       try {
-        await this.auth.login(this.model());
+        await this.session.login(this.model());
       } catch (err) {
         return toServerErrors(this.loginForm, err);
       }

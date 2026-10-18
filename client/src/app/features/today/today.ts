@@ -7,15 +7,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../../core/auth.service';
+import { Session } from '../../core/session';
 import { parseIsoDate, today } from '../../core/dates';
-import { HabitsService } from '../../core/habits.service';
-import type { Dashboard, Habit } from '../../core/models';
-import { NotifyService } from '../../core/notify.service';
+import { HabitsApi } from '../../core/habits-api';
+import type { Dashboard } from '../../core/models/dashboard';
+import type { Habit } from '../../core/models/habit';
+import { Notifier } from '../../core/notifier';
+import { EmptyState } from '../../shared/empty-state';
 import { Heatmap } from '../../shared/heatmap';
+import { PageHeader } from '../../shared/page-header';
 import { ProgressRing } from '../../shared/progress-ring';
 import { LoadingIndicator } from '../../shared/loading-indicator';
-import { ShareService } from '../share/share.service';
+import { ShareLauncher } from '../share/share-launcher';
 import { HabitRow } from './habit-row';
 
 @Component({
@@ -28,19 +31,20 @@ import { HabitRow } from './habit-row';
     MatExpansionModule,
     MatTooltipModule,
     HabitRow,
+    EmptyState,
     Heatmap,
+    PageHeader,
     ProgressRing,
     LoadingIndicator,
   ],
   templateUrl: './today.html',
-  styleUrl: './today.scss',
 })
 export class Today {
-  private readonly habitsApi = inject(HabitsService);
-  private readonly notify = inject(NotifyService);
-  private readonly auth = inject(AuthService);
-  private readonly shareService = inject(ShareService);
-  protected readonly firstName = this.auth.firstName;
+  private readonly habitsApi = inject(HabitsApi);
+  private readonly notify = inject(Notifier);
+  private readonly session = inject(Session);
+  private readonly shareLauncher = inject(ShareLauncher);
+  protected readonly firstName = this.session.firstName;
 
   protected readonly date = signal(today());
   protected readonly dashboard = httpResource<Dashboard>(() =>
@@ -84,7 +88,7 @@ export class Today {
 
   protected share(): void {
     const d = this.data();
-    if (d) void this.shareService.shareProgress(d, this.auth.user()?.name ?? '');
+    if (d) void this.shareLauncher.shareProgress(d, this.session.user()?.name ?? '');
   }
 
   protected async toggle(habit: Habit): Promise<void> {

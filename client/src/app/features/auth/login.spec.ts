@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { AuthService } from '../../core/auth.service';
+import { Session } from '../../core/session';
 import { Login } from './login';
 
 describe('Login', () => {
@@ -10,7 +10,7 @@ describe('Login', () => {
   beforeEach(() => {
     login.mockReset();
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: AuthService, useValue: { login } }],
+      providers: [provideRouter([]), { provide: Session, useValue: { login } }],
     });
   });
 

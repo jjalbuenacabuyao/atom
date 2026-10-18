@@ -1,17 +1,26 @@
-<section class="auth-card">
+<section
+  class="relative w-[min(440px,100%)] overflow-hidden rounded-xl bg-surface-container-lowest px-8 py-10 shadow-level1"
+>
   @if (registerForm().submitting()) {
-    <mat-progress-bar mode="indeterminate" class="progress" />
+    <mat-progress-bar mode="indeterminate" class="absolute! inset-x-0 top-0" />
   }
-  <app-logo [size]="40" class="mobile-logo" />
-  <h1>Start with who you want to become</h1>
-  <p class="lede">Small habits compound. Create your account and cast your first vote today.</p>
+  <app-logo [size]="40" class="mb-4 min-[960px]:hidden" />
+  <h1 class="mt-2 type-headline-medium">Start with who you want to become</h1>
+  <p class="mt-2 mb-7 text-on-surface-variant">
+    Small habits compound. Create your account and cast your first vote today.
+  </p>
 
-  <form (submit)="onSubmit($event)" novalidate>
+  <form class="grid gap-1" (submit)="onSubmit($event)" novalidate>
     @for (error of registerForm().errors(); track error) {
-      <p class="form-error" role="alert"><mat-icon>error</mat-icon>{{ error.message }}</p>
+      <p
+        class="mb-4 flex items-center gap-2 rounded-md bg-error-container px-4 py-3 text-on-error-container"
+        role="alert"
+      >
+        <mat-icon>error</mat-icon>{{ error.message }}
+      </p>
     }
 
-    <mat-form-field class="full-width">
+    <mat-form-field class="w-full">
       <mat-label>Name</mat-label>
       <input matInput autocomplete="name" [formField]="registerForm.name" />
       @if (registerForm.name().errors()[0]; as error) {
@@ -19,7 +28,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field class="full-width">
+    <mat-form-field class="w-full">
       <mat-label>Email</mat-label>
       <input matInput type="email" autocomplete="email" [formField]="registerForm.email" />
       @if (registerForm.email().errors()[0]; as error) {
@@ -27,7 +36,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field class="full-width">
+    <mat-form-field class="w-full">
       <mat-label>Password</mat-label>
       <input
         matInput
@@ -50,10 +59,17 @@
       }
     </mat-form-field>
 
-    <button mat-flat-button type="submit" class="submit" [disabled]="registerForm().submitting()">
+    <button
+      mat-flat-button
+      type="submit"
+      class="mt-2 [--mat-button-filled-container-height:48px]"
+      [disabled]="registerForm().submitting()"
+    >
       Create account
     </button>
   </form>
 
-  <p class="switch">Already have an account? <a routerLink="/login">Sign in</a></p>
+  <p class="mt-6 text-center text-on-surface-variant">
+    Already have an account? <a routerLink="/login">Sign in</a>
+  </p>
 </section>

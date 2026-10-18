@@ -5,35 +5,18 @@ import { Component, input } from '@angular/core';
   selector: 'app-logo',
   template: `
     <svg viewBox="0 0 64 64" [attr.width]="size()" [attr.height]="size()" aria-hidden="true">
-      <g fill="none" class="orbit" stroke-width="3.5">
+      <g class="fill-none stroke-primary" stroke-width="3.5">
         <ellipse cx="32" cy="32" rx="27" ry="10.5" />
         <ellipse cx="32" cy="32" rx="27" ry="10.5" transform="rotate(60 32 32)" />
         <ellipse cx="32" cy="32" rx="27" ry="10.5" transform="rotate(120 32 32)" />
       </g>
-      <circle cx="32" cy="32" r="6" class="nucleus" />
+      <circle cx="32" cy="32" r="6" class="fill-tertiary" />
     </svg>
     @if (showName()) {
-      <span class="name">Atom</span>
+      <span class="type-title-large font-brand tracking-[-0.01em]">Atom</span>
     }
   `,
-  styles: `
-    :host {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .orbit {
-      stroke: var(--mat-sys-primary);
-    }
-    .nucleus {
-      fill: var(--mat-sys-tertiary);
-    }
-    .name {
-      font: var(--mat-sys-title-large);
-      font-family: var(--mat-sys-headline-large-font);
-      letter-spacing: -0.01em;
-    }
-  `,
+  host: { class: 'inline-flex items-center gap-2.5' },
 })
 export class Logo {
   readonly size = input(32);

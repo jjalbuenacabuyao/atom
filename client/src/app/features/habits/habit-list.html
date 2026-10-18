@@ -1,59 +1,62 @@
 <div class="page">
-  <header class="page-header">
-    <div>
-      <span class="eyebrow">Your system</span>
-      <h1>Habits</h1>
-      <p>Drag to reorder. Archive habits you have mastered to keep their history.</p>
-    </div>
+  <app-page-header
+    eyebrow="Your system"
+    heading="Habits"
+    subtitle="Drag to reorder. Archive habits you have mastered to keep their history."
+  >
     <a mat-flat-button routerLink="/habits/new"><mat-icon>add</mat-icon>New habit</a>
-  </header>
+  </app-page-header>
 
   <mat-button-toggle-group
     [value]="view()"
     (change)="view.set($event.value)"
     aria-label="Show habits"
-    class="view-toggle"
+    class="mb-4"
   >
     <mat-button-toggle value="active">Active</mat-button-toggle>
     <mat-button-toggle value="archived">Archived</mat-button-toggle>
   </mat-button-toggle-group>
 
   @if (loading() && !habits().length) {
-    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading habits" /></div>
+    <div class="grid place-items-center py-24">
+      <app-loading-indicator [size]="64" label="Loading habits" />
+    </div>
   }
 
   @if (resource.error()) {
-    <div class="empty-state" role="alert">
-      <mat-icon>cloud_off</mat-icon>
-      <h2>Could not load habits</h2>
+    <app-empty-state role="alert" icon="cloud_off" heading="Could not load habits">
       <button mat-stroked-button (click)="resource.reload()">Try again</button>
-    </div>
+    </app-empty-state>
   } @else if (!loading() && habits().length === 0) {
-    <div class="empty-state">
-      <mat-icon>{{ view() === 'active' ? 'bolt' : 'inventory_2' }}</mat-icon>
-      @if (view() === 'active') {
-        <h2>No habits yet</h2>
+    @if (view() === 'active') {
+      <app-empty-state icon="bolt" heading="No habits yet">
         <p>Habits are the compound interest of self-improvement. Start with one.</p>
         <a mat-flat-button routerLink="/habits/new">Create a habit</a>
-      } @else {
-        <h2>Nothing archived</h2>
+      </app-empty-state>
+    } @else {
+      <app-empty-state icon="inventory_2" heading="Nothing archived">
         <p>Archived habits keep their history but leave your daily list.</p>
-      }
-    </div>
+      </app-empty-state>
+    }
   } @else {
     <div
-      class="list segmented"
+      class="segmented"
       role="list"
       cdkDropList
       [cdkDropListDisabled]="view() === 'archived'"
       (cdkDropListDropped)="drop($event)"
     >
       @for (habit of habits(); track habit.id) {
-        <div class="item habit-item" role="listitem" cdkDrag cdkDragLockAxis="y">
+        <div
+          class="habit-item flex items-center gap-2 rounded-lg-increased bg-surface-container-low p-2 in-[.cdk-drop-list-dragging]:transition-transform in-[.cdk-drop-list-dragging]:duration-200 in-[.cdk-drop-list-dragging]:ease-effects [&.cdk-drag-animating]:transition-transform [&.cdk-drag-animating]:duration-200 [&.cdk-drag-placeholder]:opacity-30 [&.cdk-drag-preview]:shadow-level3"
+          role="listitem"
+          cdkDrag
+          cdkDragLockAxis="y"
+        >
           @if (view() === 'active') {
             <button
               mat-icon-button
-              class="handle"
+              class="cursor-grab text-on-surface-variant!"
               cdkDragHandle
               aria-label="Drag to reorder"
               type="button"
@@ -61,11 +64,14 @@
               <mat-icon>drag_indicator</mat-icon>
             </button>
           }
-          <a class="main" [routerLink]="['/habits', habit.id]">
+          <a
+            class="flex min-w-0 flex-1 items-center gap-3.5 rounded-md p-1 text-inherit no-underline focus-visible:outline-2 focus-visible:outline-primary"
+            [routerLink]="['/habits', habit.id]"
+          >
             <app-habit-avatar [icon]="habit.icon" [color]="habit.color" />
-            <div class="text">
-              <span class="name">{{ habit.name }}</span>
-              <span class="meta">
+            <div class="grid min-w-0">
+              <span class="type-title-medium">{{ habit.name }}</span>
+              <span class="truncate type-body-small text-on-surface-variant">
                 {{ habit.kind === 'break' ? 'Breaking' : 'Building' }} · {{ schedule(habit) }}
                 @if (habit.identity) {
                   · {{ habit.identity.statement }}
@@ -73,13 +79,16 @@
               </span>
             </div>
           </a>
-          <div class="stats">
-            <span matTooltip="Current streak"
-              ><mat-icon>local_fire_department</mat-icon>{{ habit.stats.currentStreak }}</span
+          <div class="hidden gap-4 type-label-large text-on-surface-variant medium:flex">
+            <span class="inline-flex items-center gap-0.5" matTooltip="Current streak"
+              ><mat-icon class="icon-4.5!">local_fire_department</mat-icon
+              >{{ habit.stats.currentStreak }}</span
             >
-            <span matTooltip="Completion over the last 30 scheduled days">{{
-              percent(habit.stats.completionRate)
-            }}</span>
+            <span
+              class="inline-flex items-center gap-0.5"
+              matTooltip="Completion over the last 30 scheduled days"
+              >{{ percent(habit.stats.completionRate) }}</span
+            >
           </div>
           <button
             mat-icon-button

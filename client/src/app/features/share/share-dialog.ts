@@ -3,9 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { NotifyService } from '../../core/notify.service';
+import { Notifier } from '../../core/notifier';
 import { LoadingIndicator } from '../../shared/loading-indicator';
-import { ThemeService } from '../../core/theme.service';
+import { Theme } from '../../core/theme';
 import { SHARE_FORMATS, ShareCard, shareFileName, ShareFormat, ShareTheme } from './share-card';
 import { renderShareCard } from './share-renderer';
 
@@ -26,18 +26,17 @@ export interface ShareDialogData {
     LoadingIndicator,
   ],
   templateUrl: './share-dialog.html',
-  styleUrl: './share-dialog.scss',
 })
 export class ShareDialog {
   protected readonly data = inject<ShareDialogData>(MAT_DIALOG_DATA);
-  private readonly notify = inject(NotifyService);
+  private readonly notify = inject(Notifier);
 
   protected readonly formats = Object.entries(SHARE_FORMATS) as [
     ShareFormat,
     (typeof SHARE_FORMATS)[ShareFormat],
   ][];
   protected readonly format = signal<ShareFormat>('square');
-  protected readonly theme = signal<ShareTheme>(inject(ThemeService).theme());
+  protected readonly theme = signal<ShareTheme>(inject(Theme).scheme());
 
   /** Card data is loaded once; re-rendering only changes format/theme. */
   private readonly cardPromise = this.data.card();

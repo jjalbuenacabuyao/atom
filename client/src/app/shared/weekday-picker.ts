@@ -13,6 +13,7 @@ import { WEEKDAYS } from '../core/dates';
     @for (day of days; track day.bit) {
       <button
         type="button"
+        class="size-11 cursor-pointer rounded-full border border-outline bg-transparent type-label-large text-on-surface transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-default disabled:opacity-38 [&.on]:border-transparent [&.on]:bg-primary [&.on]:text-on-primary"
         [class.on]="isOn(day.bit)"
         [attr.aria-pressed]="isOn(day.bit)"
         [attr.aria-label]="day.label"
@@ -24,40 +25,7 @@ import { WEEKDAYS } from '../core/dates';
       </button>
     }
   `,
-  host: { role: 'group', 'aria-label': 'Scheduled days' },
-  styles: `
-    :host {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    button {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid var(--mat-sys-outline);
-      background: transparent;
-      color: var(--mat-sys-on-surface);
-      font: var(--mat-sys-label-large);
-      cursor: pointer;
-      transition:
-        background-color 150ms ease,
-        color 150ms ease;
-    }
-    button.on {
-      border-color: transparent;
-      background: var(--mat-sys-primary);
-      color: var(--mat-sys-on-primary);
-    }
-    button:focus-visible {
-      outline: 2px solid var(--mat-sys-primary);
-      outline-offset: 2px;
-    }
-    button:disabled {
-      opacity: 0.38;
-      cursor: default;
-    }
-  `,
+  host: { role: 'group', 'aria-label': 'Scheduled days', class: 'flex flex-wrap gap-2' },
 })
 export class WeekdayPicker implements FormValueControl<number> {
   readonly value = model(0);

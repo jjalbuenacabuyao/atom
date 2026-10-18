@@ -1,4 +1,4 @@
-import type { HabitKind } from '../../core/models';
+import type { HabitKind } from '../../core/models/habit';
 
 export const HABIT_COLORS = [
   '#3550D3',

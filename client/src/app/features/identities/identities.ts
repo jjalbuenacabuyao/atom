@@ -6,11 +6,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { IdentitiesService } from '../../core/identities.service';
-import type { Identity } from '../../core/models';
-import { NotifyService } from '../../core/notify.service';
-import { ConfirmService } from '../../shared/confirm-dialog';
+import { IdentitiesApi } from '../../core/identities-api';
+import type { Identity } from '../../core/models/identity';
+import { Notifier } from '../../core/notifier';
+import { Confirmer } from '../../shared/confirmer';
+import { EmptyState } from '../../shared/empty-state';
 import { LoadingIndicator } from '../../shared/loading-indicator';
+import { PageHeader } from '../../shared/page-header';
 import { IdentityDialog } from './identity-dialog';
 
 const EXAMPLES = [
@@ -24,15 +26,22 @@ const EXAMPLES = [
 
 @Component({
   selector: 'app-identities',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, LoadingIndicator],
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    LoadingIndicator,
+    EmptyState,
+    PageHeader,
+  ],
   templateUrl: './identities.html',
-  styleUrl: './identities.scss',
 })
 export class Identities {
-  private readonly api = inject(IdentitiesService);
+  private readonly api = inject(IdentitiesApi);
   private readonly dialog = inject(MatDialog);
-  private readonly notify = inject(NotifyService);
-  private readonly confirm = inject(ConfirmService);
+  private readonly notify = inject(Notifier);
+  private readonly confirm = inject(Confirmer);
 
   /** `?welcome=true` after registration shows onboarding guidance. */
   readonly welcome = input(false, { transform: booleanAttribute });

@@ -15,12 +15,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { describeSchedule } from '../../core/dates';
-import { HabitsService } from '../../core/habits.service';
-import type { Habit } from '../../core/models';
-import { NotifyService } from '../../core/notify.service';
-import { ConfirmService } from '../../shared/confirm-dialog';
+import { HabitsApi } from '../../core/habits-api';
+import type { Habit } from '../../core/models/habit';
+import { Notifier } from '../../core/notifier';
+import { Confirmer } from '../../shared/confirmer';
+import { EmptyState } from '../../shared/empty-state';
 import { HabitAvatar } from '../../shared/habit-avatar';
 import { LoadingIndicator } from '../../shared/loading-indicator';
+import { PageHeader } from '../../shared/page-header';
 
 type View = 'active' | 'archived';
 
@@ -36,16 +38,17 @@ type View = 'active' | 'archived';
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
+    EmptyState,
     HabitAvatar,
+    PageHeader,
     LoadingIndicator,
   ],
   templateUrl: './habit-list.html',
-  styleUrl: './habit-list.scss',
 })
 export class HabitList {
-  private readonly habitsApi = inject(HabitsService);
-  private readonly notify = inject(NotifyService);
-  private readonly confirm = inject(ConfirmService);
+  private readonly habitsApi = inject(HabitsApi);
+  private readonly notify = inject(Notifier);
+  private readonly confirm = inject(Confirmer);
 
   protected readonly view = signal<View>('active');
   protected readonly resource = httpResource<Habit[]>(
@@ -103,7 +106,7 @@ export class HabitList {
   }
 
   private async run(
-    request: ReturnType<HabitsService['archive']>,
+    request: ReturnType<HabitsApi['archive']>,
     message: string,
     undo?: () => void,
   ): Promise<void> {

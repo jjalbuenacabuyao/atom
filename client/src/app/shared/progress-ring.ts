@@ -16,21 +16,27 @@ const GAP = STROKE + 6;
 @Component({
   selector: 'app-progress-ring',
   template: `
-    <svg [attr.viewBox]="'0 0 ' + size() + ' ' + size()" aria-hidden="true">
+    <svg
+      class="absolute inset-0 overflow-visible fill-none stroke-8 [stroke-linecap:round] [stroke-linejoin:round]"
+      [attr.viewBox]="'0 0 ' + size() + ' ' + size()"
+      aria-hidden="true"
+    >
       @if (trackPath()) {
-        <path class="track" [attr.d]="trackPath()" />
+        <!-- The track stays visible on any tonal container the ring sits on. -->
+        <path class="stroke-current/20" [attr.d]="trackPath()" />
       }
       @if (clamped() > 0) {
         <path
-          class="wave"
+          class="stroke-primary transition-[d] duration-(--atom-spring-slow-duration) ease-spring"
           [attr.d]="wavePath()"
           [style.d]="'path(&quot;' + wavePath() + '&quot;)'"
         />
       }
     </svg>
-    <div class="content"><ng-content /></div>
+    <div class="relative text-center"><ng-content /></div>
   `,
   host: {
+    class: 'relative inline-grid place-items-center',
     role: 'progressbar',
     'aria-valuemin': '0',
     'aria-valuemax': '100',
@@ -40,36 +46,6 @@ const GAP = STROKE + 6;
     '[style.width.px]': 'size()',
     '[style.height.px]': 'size()',
   },
-  styles: `
-    :host {
-      position: relative;
-      display: inline-grid;
-      place-items: center;
-    }
-    svg {
-      position: absolute;
-      inset: 0;
-      overflow: visible;
-    }
-    path {
-      fill: none;
-      stroke-width: 8px;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .track {
-      /* Visible on any tonal container the ring sits on. */
-      stroke: color-mix(in srgb, currentColor 20%, transparent);
-    }
-    .wave {
-      stroke: var(--mat-sys-primary);
-      transition: d var(--atom-spring-slow-duration) var(--atom-spring-default);
-    }
-    .content {
-      position: relative;
-      text-align: center;
-    }
-  `,
 })
 export class ProgressRing {
   /** Progress between 0 and 1. */

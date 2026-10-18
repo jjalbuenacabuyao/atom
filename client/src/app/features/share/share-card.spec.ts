@@ -1,4 +1,4 @@
-import type { HabitStats } from '../../core/models';
+import type { HabitStats } from '../../core/models/habit';
 import { buildWeekGrid, intensity, shareFileName, wrapText } from './share-card';
 
 describe('share card helpers', () => {

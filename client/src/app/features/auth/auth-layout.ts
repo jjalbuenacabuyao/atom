@@ -7,33 +7,45 @@ import { Logo } from '../../shared/logo';
   selector: 'app-auth-layout',
   imports: [RouterOutlet, Logo],
   template: `
-    <div class="layout">
-      <aside class="hero" aria-hidden="true">
+    <div class="grid min-h-dvh min-[960px]:grid-cols-[minmax(400px,5fr)_6fr]">
+      <aside
+        class="hidden flex-col gap-8 bg-[radial-gradient(circle_at_20%_10%,var(--mat-sys-primary-container),transparent_60%),var(--mat-sys-surface-container)] p-12 text-on-surface min-[960px]:flex"
+        aria-hidden="true"
+      >
         <app-logo [size]="44" />
-        <div class="pitch">
-          <p class="eyebrow">Tiny changes · Remarkable results</p>
-          <h2>Get 1% better every day.</h2>
-          <p>
+        <div class="mt-auto">
+          <p class="my-4 eyebrow">Tiny changes · Remarkable results</p>
+          <h2 class="mt-2 mb-4 type-display-medium tracking-[-0.02em]">Get 1% better every day.</h2>
+          <p class="my-4 max-w-[42ch] type-body-large text-on-surface-variant">
             Improve by just one percent each day and you will be nearly
             <strong>37 times better</strong> by the end of the year. Atom helps you design habits
             that stick using the Four Laws of Behavior Change.
           </p>
         </div>
-        <svg class="curve" viewBox="0 0 365 120" preserveAspectRatio="none">
-          <path [attr.d]="better" class="up" />
-          <path [attr.d]="worse" class="down" />
+        <svg
+          class="h-35 w-full fill-none stroke-3 [stroke-linecap:round] [&_path]:[vector-effect:non-scaling-stroke]"
+          viewBox="0 0 365 120"
+          preserveAspectRatio="none"
+        >
+          <path [attr.d]="better" class="stroke-primary" />
+          <path [attr.d]="worse" class="stroke-error" />
         </svg>
-        <div class="legend">
-          <span><i class="up"></i>1.01<sup>365</sup> = 37.78</span>
-          <span><i class="down"></i>0.99<sup>365</sup> = 0.03</span>
+        <div class="flex gap-6 type-label-large text-on-surface-variant">
+          <span class="inline-flex items-center gap-2"
+            ><i class="inline-block size-3 rounded-full bg-primary"></i>1.01<sup>365</sup> =
+            37.78</span
+          >
+          <span class="inline-flex items-center gap-2"
+            ><i class="inline-block size-3 rounded-full bg-error"></i>0.99<sup>365</sup> =
+            0.03</span
+          >
         </div>
       </aside>
-      <main class="panel">
+      <main class="grid place-items-center px-4 py-8">
         <router-outlet />
       </main>
     </div>
   `,
-  styleUrl: './auth-layout.scss',
 })
 export class AuthLayout {
   protected readonly better = curve(1.01);

@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api';
 import { today } from './dates';
-import type { Dashboard, Habit, HabitInput, HabitLog } from './models';
+import type { Dashboard } from './models/dashboard';
+import type { Habit, HabitInput } from './models/habit';
+import type { HabitLog } from './models/habit-log';
 
 /** Typed client for habit, check-in and dashboard endpoints. */
-@Injectable({ providedIn: 'root' })
-export class HabitsService {
+@Service()
+export class HabitsApi {
   private readonly http = inject(HttpClient);
   private readonly base = inject(API_BASE_URL);
 

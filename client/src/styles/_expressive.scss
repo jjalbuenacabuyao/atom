@@ -158,6 +158,13 @@
       outlined-container-shape: var(--atom-shape-md),
     )
   );
+  @include mat.sidenav-overrides(
+    (
+      container-background-color: var(--mat-sys-surface-container-low),
+      container-divider-color: transparent,
+      container-width: 280px,
+    )
+  );
   @include mat.list-overrides(
     (
       active-indicator-shape: var(--atom-shape-full),
@@ -207,9 +214,16 @@
   }
 
   // --- Connected button groups ---------------------------------------------
-  // Segments are separated by a small gap; inner corners are tight, outer
-  // corners are pills, and the selected segment morphs to a full pill.
+  // Segments are separated by a small gap; inner corners are rounded but tighter
+  // than the outer pill corners, and the selected segment morphs to a full pill.
+  //
+  // The outer radius is half the tallest segment (48px) rather than 999px: when
+  // adjacent radii exceed a box's side, browsers scale *every* corner down by the
+  // same factor, so a 999px outer corner would shrink the inner corners to ~0px.
   .mat-button-toggle-group.mat-button-toggle-group-appearance-standard {
+    --atom-toggle-outer-shape: 24px;
+    --atom-toggle-inner-shape: var(--atom-shape-md);
+
     gap: 2px;
     border: 0;
     border-radius: 0;
@@ -217,7 +231,7 @@
 
     .mat-button-toggle {
       border: 0;
-      border-radius: var(--atom-shape-sm);
+      border-radius: var(--atom-toggle-inner-shape);
       overflow: hidden;
       transition: border-radius var(--atom-spring-fast-duration) var(--atom-spring-fast);
     }
@@ -227,17 +241,17 @@
     }
 
     .mat-button-toggle:first-child {
-      border-top-left-radius: var(--atom-shape-full);
-      border-bottom-left-radius: var(--atom-shape-full);
+      border-top-left-radius: var(--atom-toggle-outer-shape);
+      border-bottom-left-radius: var(--atom-toggle-outer-shape);
     }
 
     .mat-button-toggle:last-child {
-      border-top-right-radius: var(--atom-shape-full);
-      border-bottom-right-radius: var(--atom-shape-full);
+      border-top-right-radius: var(--atom-toggle-outer-shape);
+      border-bottom-right-radius: var(--atom-toggle-outer-shape);
     }
 
     .mat-button-toggle-checked {
-      border-radius: var(--atom-shape-full);
+      border-radius: var(--atom-toggle-outer-shape);
     }
 
     .mat-button-toggle-label-content {

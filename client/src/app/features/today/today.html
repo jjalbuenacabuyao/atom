@@ -1,77 +1,95 @@
 <div class="page">
-  <header class="page-header">
-    <div>
-      <span class="eyebrow">{{ longDate() }}</span>
-      <h1>{{ greeting() }}</h1>
-      <p>Every action is a vote for the type of person you wish to become.</p>
-    </div>
+  <app-page-header
+    [eyebrow]="longDate()"
+    [heading]="greeting()"
+    subtitle="Every action is a vote for the type of person you wish to become."
+  >
     @if (data()?.habits?.length) {
       <button mat-stroked-button (click)="share()">
         <mat-icon>ios_share</mat-icon>Share progress
       </button>
     }
-  </header>
+  </app-page-header>
 
   @if (dashboard.error() && !data()) {
-    <div class="empty-state" role="alert">
-      <mat-icon>cloud_off</mat-icon>
-      <h2>Could not load your day</h2>
+    <app-empty-state role="alert" icon="cloud_off" heading="Could not load your day">
       <button mat-stroked-button (click)="dashboard.reload()">Try again</button>
-    </div>
+    </app-empty-state>
   } @else if (!data()) {
-    <div class="page-loading"><app-loading-indicator [size]="64" label="Loading your day" /></div>
+    <div class="grid place-items-center py-24">
+      <app-loading-indicator [size]="64" label="Loading your day" />
+    </div>
   } @else if (data()!.habits.length === 0) {
-    <div class="empty-state">
-      <mat-icon>bolt</mat-icon>
-      <h2>Your system starts with one tiny habit</h2>
+    <app-empty-state icon="bolt" heading="Your system starts with one tiny habit">
       <p>
         Start small: pick a habit that takes less than two minutes, and link it to an identity you
         want to build.
       </p>
-      <div class="cta-row">
+      <div class="mt-2 flex flex-wrap justify-center gap-2">
         <a mat-flat-button routerLink="/habits/new">Create your first habit</a>
         <a mat-button routerLink="/scorecard">Take the Habits Scorecard</a>
       </div>
-    </div>
+    </app-empty-state>
   } @else {
     @let d = data()!;
-    <div class="layout">
-      <section class="main">
-        <mat-card appearance="filled" class="summary">
+    <div class="grid items-start gap-6 min-[1000px]:grid-cols-[minmax(0,1fr)_360px]">
+      <section class="grid min-w-0 gap-4">
+        <mat-card
+          appearance="filled"
+          class="min-w-0 flex-row! flex-wrap items-center gap-6 p-6 text-on-primary-container [--mat-card-filled-container-color:var(--mat-sys-primary-container)]"
+        >
           <app-progress-ring
             [value]="progress()"
             [size]="132"
             label="Habits completed today"
             [valueText]="d.completedCount + ' of ' + d.scheduledCount"
           >
-            <strong class="ring-value">{{ d.completedCount }}/{{ d.scheduledCount }}</strong>
-            <span class="ring-label">today</span>
+            <strong class="block type-headline-medium"
+              >{{ d.completedCount }}/{{ d.scheduledCount }}</strong
+            >
+            <span class="type-label-medium opacity-80">today</span>
           </app-progress-ring>
-          <div class="summary-text">
+          <div class="min-w-55 flex-1">
             @if (d.scheduledCount === 0) {
-              <h2>A rest day</h2>
-              <p>Nothing is scheduled today. Enjoy it — or get ahead on a bonus habit.</p>
+              <h2 class="type-headline-small">A rest day</h2>
+              <p class="mt-1 mb-4">
+                Nothing is scheduled today. Enjoy it — or get ahead on a bonus habit.
+              </p>
             } @else if (allDone()) {
-              <h2>All votes cast</h2>
-              <p>You showed up for every habit today. That is how identities are built.</p>
+              <h2 class="type-headline-small">All votes cast</h2>
+              <p class="mt-1 mb-4">
+                You showed up for every habit today. That is how identities are built.
+              </p>
             } @else {
-              <h2>{{ d.scheduledCount - d.completedCount }} to go</h2>
-              <p>Focus on showing up, not on being perfect. Two minutes is enough.</p>
+              <h2 class="type-headline-small">{{ d.scheduledCount - d.completedCount }} to go</h2>
+              <p class="mt-1 mb-4">
+                Focus on showing up, not on being perfect. Two minutes is enough.
+              </p>
             }
-            <div class="chips">
-              <span class="chip" matTooltip="Total check-ins across all habits">
-                <mat-icon>how_to_vote</mat-icon>{{ d.totalVotes }} votes
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-sm bg-surface/55 px-3 py-1.5 type-label-large"
+                matTooltip="Total check-ins across all habits"
+              >
+                <mat-icon class="icon-4.5!">how_to_vote</mat-icon>{{ d.totalVotes }} votes
               </span>
-              <span class="chip" matTooltip="Your best active streak">
-                <mat-icon>local_fire_department</mat-icon>{{ d.bestStreak }} day streak
+              <span
+                class="inline-flex items-center gap-1.5 rounded-sm bg-surface/55 px-3 py-1.5 type-label-large"
+                matTooltip="Your best active streak"
+              >
+                <mat-icon class="icon-4.5!">local_fire_department</mat-icon>{{ d.bestStreak }} day
+                streak
               </span>
             </div>
           </div>
         </mat-card>
 
         @if (atRisk().length) {
-          <aside class="never-miss" role="status">
-            <mat-icon>priority_high</mat-icon>
+          <aside
+            class="flex gap-3 rounded-lg-increased bg-tertiary-container p-4 text-on-tertiary-container"
+            role="status"
+          >
+            <mat-icon class="flex-none">priority_high</mat-icon>
             <div>
               <strong>Never miss twice.</strong>
               You missed
@@ -84,11 +102,11 @@
           </aside>
         }
 
-        <h2 class="section-title">Due today</h2>
+        <h2 class="mt-2 type-title-medium text-on-surface-variant">Due today</h2>
         @if (dueToday().length === 0) {
-          <p class="muted">No habits are scheduled for today.</p>
+          <p class="my-4 text-on-surface-variant">No habits are scheduled for today.</p>
         }
-        <div class="habit-list segmented" role="list" aria-label="Habits due today">
+        <div class="segmented" role="list" aria-label="Habits due today">
           @for (habit of dueToday(); track habit.id) {
             <app-habit-row
               [habit]="habit"
@@ -99,11 +117,11 @@
         </div>
 
         @if (notDueToday().length) {
-          <mat-expansion-panel class="later">
+          <mat-expansion-panel class="mt-2 rounded-lg-increased! bg-transparent! shadow-none!">
             <mat-expansion-panel-header>
               <mat-panel-title>Not scheduled today ({{ notDueToday().length }})</mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="habit-list segmented" role="list" aria-label="Habits not scheduled today">
+            <div class="segmented" role="list" aria-label="Habits not scheduled today">
               @for (habit of notDueToday(); track habit.id) {
                 <app-habit-row
                   [habit]="habit"
@@ -116,20 +134,22 @@
         }
       </section>
 
-      <aside class="side">
-        <mat-card appearance="outlined">
+      <aside class="grid min-w-0 gap-4">
+        <mat-card appearance="outlined" class="min-w-0">
           <mat-card-header>
             <mat-card-title>Identity votes</mat-card-title>
             <mat-card-subtitle>Who your habits say you are</mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content>
+          <mat-card-content class="pt-3!">
             @for (identity of d.identities; track identity.id) {
-              <div class="identity">
+              <div
+                class="flex justify-between gap-4 border-b border-outline-variant py-2.5 last:border-b-0"
+              >
                 <span>{{ identity.statement }}</span>
-                <strong>{{ identity.votes }}</strong>
+                <strong class="type-title-medium text-primary">{{ identity.votes }}</strong>
               </div>
             } @empty {
-              <p class="muted">
+              <p class="my-4 text-on-surface-variant">
                 Decide the type of person you want to be.
                 <a routerLink="/identity">Add an identity</a>
               </p>
@@ -137,12 +157,12 @@
           </mat-card-content>
         </mat-card>
 
-        <mat-card appearance="outlined">
+        <mat-card appearance="outlined" class="min-w-0">
           <mat-card-header>
             <mat-card-title>Last 26 weeks</mat-card-title>
             <mat-card-subtitle>Don't break the chain</mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content>
+          <mat-card-content class="pt-3!">
             <app-heatmap [days]="d.activity" />
           </mat-card-content>
         </mat-card>

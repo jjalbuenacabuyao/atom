@@ -14,17 +14,29 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom, map } from 'rxjs';
 import { describeSchedule, EVERY_DAY, formatTime, today } from '../../core/dates';
-import { HabitsService } from '../../core/habits.service';
-import { IdentitiesService } from '../../core/identities.service';
-import type { Habit, HabitInput, HabitKind, Identity } from '../../core/models';
-import { NotifyService } from '../../core/notify.service';
+import { HabitsApi } from '../../core/habits-api';
+import { IdentitiesApi } from '../../core/identities-api';
+import type { Habit, HabitInput, HabitKind } from '../../core/models/habit';
+import type { Identity } from '../../core/models/identity';
+import { Notifier } from '../../core/notifier';
 import { lowerFirst as lower } from '../../core/text';
 import { toServerErrors } from '../../shared/form-errors';
+import { EmptyState } from '../../shared/empty-state';
 import { HabitAvatar } from '../../shared/habit-avatar';
 import { LoadingIndicator } from '../../shared/loading-indicator';
+import { PageHeader } from '../../shared/page-header';
+import { Suggestions } from '../../shared/suggestions';
 import { TimeField } from '../../shared/time-field';
 import { WeekdayPicker } from '../../shared/weekday-picker';
 import { HABIT_COLORS, HABIT_ICONS, LAWS } from './habit-options';
+import {
+  applyTemplate,
+  FIELD_SUGGESTIONS,
+  HabitTemplate,
+  HABIT_TEMPLATES,
+  SuggestedField,
+  TIME_SUGGESTIONS,
+} from './habit-suggestions';
 
 interface HabitFormModel {
   name: string;
@@ -99,19 +111,21 @@ function fromHabit(h: Habit): HabitFormModel {
     MatProgressBarModule,
     MatSelectModule,
     MatStepperModule,
+    EmptyState,
     HabitAvatar,
+    PageHeader,
     LoadingIndicator,
+    Suggestions,
     TimeField,
     WeekdayPicker,
   ],
   templateUrl: './habit-editor.html',
-  styleUrl: './habit-editor.scss',
 })
 export class HabitEditor {
-  private readonly habitsApi = inject(HabitsService);
-  private readonly identitiesApi = inject(IdentitiesService);
+  private readonly habitsApi = inject(HabitsApi);
+  private readonly identitiesApi = inject(IdentitiesApi);
   private readonly router = inject(Router);
-  private readonly notify = inject(NotifyService);
+  private readonly notify = inject(Notifier);
 
   /** Route parameter; present when editing an existing habit. */
   readonly id = input<string>();
@@ -180,6 +194,48 @@ export class HabitEditor {
     const place = m.cueLocation.trim() || '[location]';
     return `I will ${lower(name)} at ${time} in ${place}.`;
   });
+  /** Example content for the chosen kind of habit. */
+  protected readonly suggestions = computed(() => FIELD_SUGGESTIONS[this.model().kind]);
+  protected readonly templates = computed(() =>
+    HABIT_TEMPLATES.filter((t) => t.kind === this.model().kind).map((t) => ({
+      value: t.name,
+      label: t.name,
+      icon: t.icon,
+    })),
+  );
+  protected readonly timeSuggestions = TIME_SUGGESTIONS.map((value) => ({
+    value,
+    label: formatTime(value),
+  }));
+
+  /** Fills a text field with a suggestion. */
+  protected suggest(field: SuggestedField | 'cueTime', value: string): void {
+    if (field === 'identity') {
+      this.pickIdentity(value);
+      return;
+    }
+    this.model.update((m) => ({ ...m, [field]: value }));
+  }
+
+  /** Starts from a complete example plan. */
+  protected useTemplate(name: string): void {
+    const template: HabitTemplate | undefined = HABIT_TEMPLATES.find((t) => t.name === name);
+    if (!template) return;
+    this.model.update((m) => applyTemplate(m, template, this.identities.value()));
+  }
+
+  /** Selects an existing identity with this statement, or proposes it as a new one. */
+  private pickIdentity(statement: string): void {
+    const existing = this.identities
+      .value()
+      .find((i) => i.statement.toLowerCase() === statement.toLowerCase());
+    this.model.update((m) =>
+      existing
+        ? { ...m, identityId: existing.id, newIdentity: '' }
+        : { ...m, identityId: '', newIdentity: statement },
+    );
+  }
+
   protected readonly stack = computed(() => {
     const m = this.model();
     if (!m.stackAfter.trim()) return '';

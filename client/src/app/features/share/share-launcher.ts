@@ -1,16 +1,17 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { addDays, today } from '../../core/dates';
-import { HabitsService } from '../../core/habits.service';
-import type { Dashboard, Habit } from '../../core/models';
+import { HabitsApi } from '../../core/habits-api';
+import type { Dashboard } from '../../core/models/dashboard';
+import type { Habit } from '../../core/models/habit';
 import type { HabitShareCard, OverviewShareCard } from './share-card';
 
 /** Opens the share dialog for a habit or for overall progress. */
-@Injectable({ providedIn: 'root' })
-export class ShareService {
+@Service()
+export class ShareLauncher {
   private readonly dialog = inject(MatDialog);
-  private readonly habitsApi = inject(HabitsService);
+  private readonly habitsApi = inject(HabitsApi);
 
   shareHabit(habit: Habit): Promise<void> {
     return this.open(`Share “${habit.name}”`, async (): Promise<HabitShareCard> => {

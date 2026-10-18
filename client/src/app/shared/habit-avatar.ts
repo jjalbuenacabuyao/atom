@@ -10,50 +10,30 @@ import { ShapeName, shapeCss, shapePath } from './shapes';
   selector: 'app-habit-avatar',
   imports: [MatIconModule],
   template: `
-    <svg viewBox="0 0 100 100" aria-hidden="true">
-      <path [attr.d]="path()" [style.d]="css()" />
+    <svg
+      viewBox="0 0 100 100"
+      aria-hidden="true"
+      class="absolute inset-0 size-full overflow-visible transition-transform duration-(--atom-spring-default-duration) ease-spring group-hover/avatar:scale-104 group-hover/avatar:rotate-30 in-[.habit-item:hover]:scale-104 in-[.habit-item:hover]:rotate-30 in-[app-habit-row:hover]:scale-104 in-[app-habit-row:hover]:rotate-30"
+    >
+      <path
+        class="fill-[color-mix(in_srgb,var(--habit-color)_22%,var(--mat-sys-surface-container-lowest))] transition-[d] duration-(--atom-spring-default-duration) ease-spring"
+        [attr.d]="path()"
+        [style.d]="css()"
+      />
     </svg>
-    <mat-icon aria-hidden="true">{{ icon() }}</mat-icon>
+    <mat-icon aria-hidden="true" class="relative size-(--icon-size)! text-(length:--icon-size)!">{{
+      icon()
+    }}</mat-icon>
   `,
   host: {
+    // Hovering the avatar or its row spins the shape a little (expressive motion).
+    class:
+      'group/avatar relative inline-grid flex-none place-items-center text-[color-mix(in_srgb,var(--habit-color)_80%,var(--mat-sys-on-surface))]',
     '[style.--habit-color]': 'color()',
     '[style.width.px]': 'size()',
     '[style.height.px]': 'size()',
     '[style.--icon-size.px]': 'size() * 0.5',
   },
-  styles: `
-    :host {
-      position: relative;
-      display: inline-grid;
-      place-items: center;
-      flex: none;
-      color: color-mix(in srgb, var(--habit-color) 80%, var(--mat-sys-on-surface));
-    }
-    svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-      transition: transform var(--atom-spring-default-duration) var(--atom-spring-default);
-    }
-    path {
-      fill: color-mix(in srgb, var(--habit-color) 22%, var(--mat-sys-surface-container-lowest));
-      transition: d var(--atom-spring-default-duration) var(--atom-spring-default);
-    }
-    mat-icon {
-      position: relative;
-      width: var(--icon-size);
-      height: var(--icon-size);
-      font-size: var(--icon-size);
-    }
-    /* Hovering the avatar or its row spins the shape a little (expressive motion). */
-    :host(:hover) svg,
-    :host-context(app-habit-row:hover) svg,
-    :host-context(.habit-item:hover) svg {
-      transform: rotate(30deg) scale(1.04);
-    }
-  `,
 })
 export class HabitAvatar {
   readonly icon = input.required<string>();

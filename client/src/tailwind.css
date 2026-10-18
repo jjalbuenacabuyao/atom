@@ -1,0 +1,250 @@
+/*
+ * Tailwind CSS v4, bridged to the app's Material 3 (Expressive) design system.
+ *
+ * The theme below replaces Tailwind's default palette, radii, shadows and
+ * breakpoints with the Angular Material system tokens (--mat-sys-*) and the
+ * app's expressive tokens (--atom-*, see styles/_expressive.scss). Utilities
+ * therefore follow light/dark mode automatically and cannot drift from the
+ * design system. `@theme inline` makes utilities reference the variables
+ * directly instead of copying their values.
+ *
+ * Tailwind's layers (theme, base, components, utilities) sit below the
+ * unlayered Angular Material styles, so Material components keep their look.
+ */
+@import 'tailwindcss';
+
+@theme inline {
+  /* --- Colour: Material 3 colour roles only ------------------------------ */
+  --color-*: initial;
+  --color-primary: var(--mat-sys-primary);
+  --color-on-primary: var(--mat-sys-on-primary);
+  --color-primary-container: var(--mat-sys-primary-container);
+  --color-on-primary-container: var(--mat-sys-on-primary-container);
+  --color-secondary: var(--mat-sys-secondary);
+  --color-on-secondary: var(--mat-sys-on-secondary);
+  --color-secondary-container: var(--mat-sys-secondary-container);
+  --color-on-secondary-container: var(--mat-sys-on-secondary-container);
+  --color-tertiary: var(--mat-sys-tertiary);
+  --color-on-tertiary: var(--mat-sys-on-tertiary);
+  --color-tertiary-container: var(--mat-sys-tertiary-container);
+  --color-on-tertiary-container: var(--mat-sys-on-tertiary-container);
+  --color-error: var(--mat-sys-error);
+  --color-on-error: var(--mat-sys-on-error);
+  --color-error-container: var(--mat-sys-error-container);
+  --color-on-error-container: var(--mat-sys-on-error-container);
+  --color-surface: var(--mat-sys-surface);
+  --color-on-surface: var(--mat-sys-on-surface);
+  --color-surface-variant: var(--mat-sys-surface-variant);
+  --color-on-surface-variant: var(--mat-sys-on-surface-variant);
+  --color-surface-container-lowest: var(--mat-sys-surface-container-lowest);
+  --color-surface-container-low: var(--mat-sys-surface-container-low);
+  --color-surface-container: var(--mat-sys-surface-container);
+  --color-surface-container-high: var(--mat-sys-surface-container-high);
+  --color-surface-container-highest: var(--mat-sys-surface-container-highest);
+  --color-inverse-surface: var(--mat-sys-inverse-surface);
+  --color-inverse-on-surface: var(--mat-sys-inverse-on-surface);
+  --color-inverse-primary: var(--mat-sys-inverse-primary);
+  --color-outline: var(--mat-sys-outline);
+  --color-outline-variant: var(--mat-sys-outline-variant);
+  --color-scrim: var(--mat-sys-scrim);
+  --color-shadow: var(--mat-sys-shadow);
+  /* App semantic colours (defined in styles.scss). */
+  --color-success: var(--atom-success);
+  --color-success-container: var(--atom-success-container);
+  --color-on-success-container: var(--atom-on-success-container);
+
+  /* --- Type families ------------------------------------------------------ */
+  --font-*: initial;
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-brand: Fraunces, Georgia, serif;
+
+  /* --- Shape: Material 3 Expressive shape scale ---------------------------- */
+  --radius-*: initial;
+  --radius-xs: var(--atom-shape-xs);
+  --radius-sm: var(--atom-shape-sm);
+  --radius-md: var(--atom-shape-md);
+  --radius-lg: var(--atom-shape-lg);
+  --radius-lg-increased: var(--atom-shape-lg-increased);
+  --radius-xl: var(--atom-shape-xl);
+  --radius-xl-increased: var(--atom-shape-xl-increased);
+  --radius-2xl: var(--atom-shape-2xl);
+
+  /* --- Elevation: Material 3 levels ------------------------------------- */
+  --shadow-*: initial;
+  --shadow-level1: var(--mat-sys-level1);
+  --shadow-level2: var(--mat-sys-level2);
+  --shadow-level3: var(--mat-sys-level3);
+  --shadow-level4: var(--mat-sys-level4);
+  --shadow-level5: var(--mat-sys-level5);
+
+  /* --- Motion: expressive springs ----------------------------------------- */
+  --ease-*: initial;
+  --ease-spring-fast: var(--atom-spring-fast);
+  --ease-spring: var(--atom-spring-default);
+  --ease-effects: var(--atom-ease-effects);
+
+  /* --- Breakpoints: Material 3 window size classes ------------------------ */
+  /* compact < 600 ≤ medium < 840 ≤ expanded < 1200 ≤ large < 1600 ≤ xlarge */
+  --breakpoint-*: initial;
+  --breakpoint-medium: 600px;
+  --breakpoint-expanded: 840px;
+  --breakpoint-large: 1200px;
+  --breakpoint-xlarge: 1600px;
+}
+
+/* Element defaults sit in the base layer so utilities can override them. */
+@layer base {
+  a {
+    color: var(--mat-sys-primary);
+  }
+}
+
+/* --- Material 3 type scale as utilities: `type-title-large` etc. ----------
+ * Longhand properties (not the `font` shorthand) so single-property
+ * utilities such as `font-brand` or `font-semibold` can refine them: Tailwind
+ * emits multi-property utilities before single-property ones. Letter-spacing is
+ * left to the element (add `tracking-*` where needed). */
+@utility type-display-large {
+  font-family: var(--mat-sys-display-large-font);
+  font-size: var(--mat-sys-display-large-size);
+  line-height: var(--mat-sys-display-large-line-height);
+  font-weight: var(--mat-sys-display-large-weight);
+}
+@utility type-display-medium {
+  font-family: var(--mat-sys-display-medium-font);
+  font-size: var(--mat-sys-display-medium-size);
+  line-height: var(--mat-sys-display-medium-line-height);
+  font-weight: var(--mat-sys-display-medium-weight);
+}
+@utility type-display-small {
+  font-family: var(--mat-sys-display-small-font);
+  font-size: var(--mat-sys-display-small-size);
+  line-height: var(--mat-sys-display-small-line-height);
+  font-weight: var(--mat-sys-display-small-weight);
+}
+@utility type-headline-large {
+  font-family: var(--mat-sys-headline-large-font);
+  font-size: var(--mat-sys-headline-large-size);
+  line-height: var(--mat-sys-headline-large-line-height);
+  font-weight: var(--mat-sys-headline-large-weight);
+}
+@utility type-headline-medium {
+  font-family: var(--mat-sys-headline-medium-font);
+  font-size: var(--mat-sys-headline-medium-size);
+  line-height: var(--mat-sys-headline-medium-line-height);
+  font-weight: var(--mat-sys-headline-medium-weight);
+}
+@utility type-headline-small {
+  font-family: var(--mat-sys-headline-small-font);
+  font-size: var(--mat-sys-headline-small-size);
+  line-height: var(--mat-sys-headline-small-line-height);
+  font-weight: var(--mat-sys-headline-small-weight);
+}
+@utility type-title-large {
+  font-family: var(--mat-sys-title-large-font);
+  font-size: var(--mat-sys-title-large-size);
+  line-height: var(--mat-sys-title-large-line-height);
+  font-weight: var(--mat-sys-title-large-weight);
+}
+@utility type-title-medium {
+  font-family: var(--mat-sys-title-medium-font);
+  font-size: var(--mat-sys-title-medium-size);
+  line-height: var(--mat-sys-title-medium-line-height);
+  font-weight: var(--mat-sys-title-medium-weight);
+}
+@utility type-title-small {
+  font-family: var(--mat-sys-title-small-font);
+  font-size: var(--mat-sys-title-small-size);
+  line-height: var(--mat-sys-title-small-line-height);
+  font-weight: var(--mat-sys-title-small-weight);
+}
+@utility type-body-large {
+  font-family: var(--mat-sys-body-large-font);
+  font-size: var(--mat-sys-body-large-size);
+  line-height: var(--mat-sys-body-large-line-height);
+  font-weight: var(--mat-sys-body-large-weight);
+}
+@utility type-body-medium {
+  font-family: var(--mat-sys-body-medium-font);
+  font-size: var(--mat-sys-body-medium-size);
+  line-height: var(--mat-sys-body-medium-line-height);
+  font-weight: var(--mat-sys-body-medium-weight);
+}
+@utility type-body-small {
+  font-family: var(--mat-sys-body-small-font);
+  font-size: var(--mat-sys-body-small-size);
+  line-height: var(--mat-sys-body-small-line-height);
+  font-weight: var(--mat-sys-body-small-weight);
+}
+@utility type-label-large {
+  font-family: var(--mat-sys-label-large-font);
+  font-size: var(--mat-sys-label-large-size);
+  line-height: var(--mat-sys-label-large-line-height);
+  font-weight: var(--mat-sys-label-large-weight);
+}
+@utility type-label-medium {
+  font-family: var(--mat-sys-label-medium-font);
+  font-size: var(--mat-sys-label-medium-size);
+  line-height: var(--mat-sys-label-medium-line-height);
+  font-weight: var(--mat-sys-label-medium-weight);
+}
+@utility type-label-small {
+  font-family: var(--mat-sys-label-small-font);
+  font-size: var(--mat-sys-label-small-size);
+  line-height: var(--mat-sys-label-small-line-height);
+  font-weight: var(--mat-sys-label-small-weight);
+}
+
+/* M3 Expressive "emphasized" type styles: heavier weight, tighter tracking. */
+@utility type-display-small-emphasized {
+  font-family: var(--mat-sys-display-small-font);
+  font-size: var(--mat-sys-display-small-size);
+  line-height: var(--mat-sys-display-small-line-height);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+@utility type-headline-small-emphasized {
+  font-family: var(--mat-sys-headline-small-font);
+  font-size: var(--mat-sys-headline-small-size);
+  line-height: var(--mat-sys-headline-small-line-height);
+  font-weight: 600;
+}
+@utility type-title-medium-emphasized {
+  font-family: var(--mat-sys-title-medium-font);
+  font-size: var(--mat-sys-title-medium-size);
+  line-height: var(--mat-sys-title-medium-line-height);
+  font-weight: 600;
+}
+
+/* --- App patterns ------------------------------------------------------------ */
+
+/* Material icon size on the spacing scale: `icon-6` = 24px. Use with `!`
+   (e.g. `icon-4.5!`) because <mat-icon>'s own sizes are unlayered. */
+@utility icon-* {
+  width: --spacing(--value(number));
+  height: --spacing(--value(number));
+  font-size: --spacing(--value(number));
+}
+
+/* Centred page container; extra bottom room on compact screens for the FAB
+   and navigation bar. */
+@utility page {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 24px 16px 176px;
+
+  @variant expanded {
+    padding: 32px 32px 96px;
+  }
+}
+
+/* Small uppercase label above a heading. */
+@utility eyebrow {
+  font-family: var(--mat-sys-label-large-font);
+  font-size: var(--mat-sys-label-large-size);
+  line-height: var(--mat-sys-label-large-line-height);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mat-sys-primary);
+}

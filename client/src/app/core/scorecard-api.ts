@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api';
-import type { ScorecardEntry, ScorecardInput } from './models';
+import type { ScorecardEntry, ScorecardInput } from './models/scorecard-entry';
 
 /** Typed client for Habits Scorecard endpoints. */
-@Injectable({ providedIn: 'root' })
-export class ScorecardService {
+@Service()
+export class ScorecardApi {
   private readonly http = inject(HttpClient);
   readonly url = `${inject(API_BASE_URL)}/scorecard`;
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { PageHeader } from '../../shared/page-header';
 
 interface Law {
   n: number;
@@ -90,9 +91,8 @@ const PRINCIPLES = [
 
 @Component({
   selector: 'app-guide',
-  imports: [RouterLink, MatButtonModule, MatIconModule],
+  imports: [RouterLink, MatButtonModule, MatIconModule, PageHeader],
   templateUrl: './guide.html',
-  styleUrl: './guide.scss',
 })
 export class Guide {
   protected readonly laws = LAWS;

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import type { Habit } from '../../core/models';
+import type { Habit } from '../../core/models/habit';
 import { HabitRow } from './habit-row';
 
 const habit: Habit = {

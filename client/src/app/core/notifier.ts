@@ -1,10 +1,10 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { errorMessage } from './api';
 
 /** Thin wrapper around MatSnackBar for consistent feedback messages. */
-@Injectable({ providedIn: 'root' })
-export class NotifyService {
+@Service()
+export class Notifier {
   private readonly snackBar = inject(MatSnackBar);
 
   info(message: string, action?: string, onAction?: () => void): void {
